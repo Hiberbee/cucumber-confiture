@@ -1,0 +1,59 @@
+plugins {
+  id("java-library")
+  id("com.github.ben-manes.versions") version "0.28.0"
+  id("idea")
+  id("org.jetbrains.gradle.plugin.idea-ext") version "0.7"
+}
+
+group = "com.hiberbee"
+version = "1.0.0-SNAPSHOT"
+
+repositories {
+  jcenter()
+}
+
+def VERSIONS = [
+  cucumber        : "5.5.0",
+  cucumberSelenium: "1.0.0-SNAPSHOT",
+  gradle          : "6.3",
+  junit           : "5.6.1",
+  slf4j           : "1.7.30",
+]
+
+idea {
+  project {
+    settings {
+      copyright {
+        useDefault = "Hiberbee"
+        profiles {
+          Hiberbee {
+            notice = file("LICENSE").readLines().join("\n")
+          }
+        }
+      }
+    }
+  }
+}
+
+wrapper {
+  distributionType(Wrapper.DistributionType.ALL)
+  gradleVersion(VERSIONS.gradle)
+}
+
+tasks.withType(JavaCompile).configureEach {
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
+  it.options.setFork(true)
+  it.options.setIncremental(true)
+}
+
+dependencies {
+  implementation platform("org.junit:junit-bom:$VERSIONS.junit")
+  implementation platform("io.cucumber:cucumber-core:$VERSIONS.cucumber")
+  implementation("com.hiberbee.cucumber:selenium:$VERSIONS.cucumberSelenium")
+  implementation("org.slf4j:slf4j-simple:$VERSIONS.slf4j")
+  testRuntime("org.junit.jupiter:junit-jupiter-engine")
+  testRuntime("org.junit.platform:junit-platform-launcher")
+  testRuntime("org.junit.platform:junit-platform-runner")
+  testRuntime("org.junit.vintage:junit-vintage-engine")
+}

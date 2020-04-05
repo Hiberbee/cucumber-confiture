@@ -5,8 +5,11 @@ pluginManagement {
 }
 buildCache {
   local {
-    isEnabled = true
-    directory = rootProject.projectDir.resolve(".gradle/cache")
+    enabled = true
+    directory = file("${rootProject.projectDir.absolutePath}/.gradle/cache")
   }
 }
+
 rootProject.name = "cucumber-confiture"
+
+includeBuild("selenium")

@@ -13,3 +13,5 @@ buildCache {
 rootProject.name = "cucumber-confiture"
 
 includeBuild("selenium")
+includeBuild("system")
+

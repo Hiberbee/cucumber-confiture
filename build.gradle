@@ -5,7 +5,7 @@ plugins {
   id("org.jetbrains.gradle.plugin.idea-ext") version "0.7"
 }
 
-group = "com.hiberbee"
+group = "com.hiberbee.cucumber"
 version = "1.0.0-SNAPSHOT"
 
 repositories {
@@ -13,11 +13,11 @@ repositories {
 }
 
 def VERSIONS = [
-  cucumber        : "5.5.0",
+  cucumber        : "5.6.0",
   cucumberSelenium: "1.0.0-SNAPSHOT",
   gradle          : "6.3",
   junit           : "5.6.1",
-  slf4j           : "1.7.30",
+  slf4j           : "2.0.0-alpha1",
 ]
 
 idea {

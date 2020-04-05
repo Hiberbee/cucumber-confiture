@@ -1,6 +1,7 @@
 plugins {
   id("idea")
   id("java-library")
+  id("com.github.ben-manes.versions") version "0.28.0"
   id("org.jetbrains.gradle.plugin.idea-ext") version "0.7"
 }
 
@@ -11,7 +12,7 @@ def VERSIONS = [
   assertj         : "3.15.0",
   junit           : "5.6.1",
   jupiter         : "1.6.1",
-  cucumber        : "5.6.0",
+  cucumber        : "5.5.0",
   webdriverManager: "3.8.1",
   webdriver       : "4.0.0-alpha-5"
 ]
@@ -35,9 +36,6 @@ dependencies {
   api("org.junit.jupiter:junit-jupiter-api")
   api("io.cucumber:cucumber-core")
   implementation("org.seleniumhq.selenium:selenium-support:$VERSIONS.webdriver")
-  implementation("org.seleniumhq.selenium:selenium-chrome-driver:$VERSIONS.webdriver")
-  implementation("org.seleniumhq.selenium:selenium-firefox-driver:$VERSIONS.webdriver")
-  implementation("org.seleniumhq.selenium:selenium-edge-driver:$VERSIONS.webdriver")
   implementation("org.assertj:assertj-core:$VERSIONS.assertj")
   implementation("io.cucumber:cucumber-java")
   implementation("io.github.bonigarcia:webdrivermanager:$VERSIONS.webdriverManager")

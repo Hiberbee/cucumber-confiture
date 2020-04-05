@@ -22,43 +22,30 @@
  * SOFTWARE.
  */
 
-package com.hiberbee.cucumber.selenium.definitions;
+package com.hiberbee.cucumber.types;
 
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.assertj.core.api.Assertions;
+import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
-public class WebDriverDefinitions {
+public enum Browser {
+  CHROME,
+  EDGE,
+  FIREFOX;
 
-  private WebDriver driver;
-
-  @Before
-  public static void setupWebDriver() {
-    WebDriverManager.chromedriver().setup();
+  @NotNull
+  public WebDriver create() {
+    switch (this) {
+      case EDGE:
+        return new EdgeDriver();
+      case FIREFOX:
+        return new FirefoxDriver();
+      case CHROME:
+      default:
+        return new ChromeDriver();
+    }
   }
 
-  @Given("^I can open (.+) web page in browser$")
-  public void iCanOpenWebPageWithWebDriver(final String url) {
-    this.driver.get(url);
-  }
-
-  @After
-  public void quitWebDriver() {
-    if (this.driver != null) this.driver.quit();
-  }
-
-  @Given("^(Chrome|Firefox) web browser$")
-  public void webBrowser(final String browser) {
-    this.driver = new ChromeDriver();
-  }
-
-  @And("^page (title|content) should contain (.+)$")
-  public void pageTitleShouldContain(final String location, final String text) {
-    Assertions.assertThat(this.driver.getTitle()).contains(text);
-  }
 }

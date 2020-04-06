@@ -1,0 +1,47 @@
+plugins {
+  id("idea")
+  id("java-library")
+  id("org.jetbrains.gradle.plugin.idea-ext") version "0.7"
+}
+
+group 'com.hiberbee.cucumber'
+version '1.0.0-SNAPSHOT'
+
+repositories {
+  jcenter()
+}
+
+def VERSIONS = [
+  cucumber            : "5.6.0",
+  gradle              : "6.3",
+  jetbrainsAnnotations: "19.0",
+  junit               : "5.6.1",
+  slf4j               : "2.0.0-alpha1",
+  assertj             : "3.15.0",
+]
+
+wrapper {
+  distributionType(Wrapper.DistributionType.ALL)
+  gradleVersion(VERSIONS.gradle)
+}
+
+idea {
+  module {
+    setInheritOutputDirs(true)
+    setDownloadJavadoc(false)
+    setDownloadSources(true)
+  }
+}
+
+dependencies {
+  implementation platform("org.junit:junit-bom:$VERSIONS.junit")
+  implementation platform("io.cucumber:cucumber-core:$VERSIONS.cucumber")
+
+  api("io.cucumber:cucumber-core")
+  api("io.cucumber:cucumber-java")
+  api("io.cucumber:cucumber-junit-platform-engine")
+  api("org.junit.jupiter:junit-jupiter-api")
+  api("org.junit.jupiter:junit-jupiter-engine")
+  api("org.assertj:assertj-core:$VERSIONS.assertj")
+  implementation("org.slf4j:slf4j-simple:$VERSIONS.slf4j")
+}

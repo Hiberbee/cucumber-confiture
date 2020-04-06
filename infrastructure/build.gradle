@@ -1,0 +1,19 @@
+plugins {
+  id("idea")
+  id("java-library")
+}
+
+repositories {
+  jcenter()
+}
+
+def VERSIONS = [
+  kubernetesClient: "4.9.0",
+  self            : rootProject.version,
+]
+
+dependencies {
+  implementation("com.hiberbee.cucumber:common:$VERSIONS.self")
+
+  implementation("io.fabric8:kubernetes-client:$VERSIONS.kubernetesClient")
+}

@@ -37,6 +37,7 @@ import org.junit.platform.commons.function.Try;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.devtools.browser.model.WindowState;
 
 import java.net.URI;
 import java.net.URL;
@@ -52,6 +53,11 @@ public class SeleniumStepDefinitions {
     return DriverManagerType.valueOf(value.toUpperCase());
   }
 
+  @ParameterType(value = "(maximized|minimized|fullscreen|normal)", name = "windowState")
+  public WindowState windowState(@NotNull final String value) {
+    return WindowState.fromString(value.toUpperCase());
+  }
+
   @ParameterType(value = "(.+)", name = "url")
   public URL url(final String value) {
     final var url = Try.call(() -> URI.create(value)).andThenTry(URI::toURL).toOptional();
@@ -63,19 +69,21 @@ public class SeleniumStepDefinitions {
     if (scenario.isFailed()) this.driver.manage().window().maximize();
   }
 
-  @Given("^window is (maximized|minimized|fullscreen)$")
-  public void windowIsMaximized(@NotNull final String window) {
-    switch (window) {
-      case "maximized":
+  @Given("window state is {windowState}")
+  public void windowStateIs(@NotNull final WindowState state) {
+    switch (state) {
+      case NORMAL:
+      default:
+        break;
+      case MAXIMIZED:
         this.driver.manage().window().maximize();
         break;
-      case "minimized":
+      case MINIMIZED:
         this.driver.manage().window().minimize();
         break;
-      case "fullscreen":
+      case FULLSCREEN:
         this.driver.manage().window().fullscreen();
         break;
-      default:
     }
   }
 

@@ -2,7 +2,7 @@ Feature: Multi-module Gradle project
 
   Background:
     Given Chrome web browser
-    And window is minimized
+    And window state is minimized
 
   Scenario: Included build depenencies
     Given I can open https://google.com web page

@@ -15,12 +15,13 @@ repositories {
 }
 
 def VERSIONS = [
-  gradle              : "6.3",
   cucumber            : "5.6.0",
+  cucumberReporting   : "4.0.36",
+  gradle              : "6.3",
+  jetbrainsAnnotations: "19.0",
+  junit               : "5.6.1",
   lombok              : "1.18.12",
   springBoot          : "2.2.6.RELEASE",
-  junit               : "5.6.1",
-  jetbrainsAnnotations: "19.0"
 ]
 
 sonarqube {
@@ -82,27 +83,6 @@ tasks.register("systemTest", CucumberFeature) {
   args += ["--select-package", "features.system"]
 }
 
-tasks.withType(Test).configureEach {
-  useJUnitPlatform {
-    failFast = true
-  }
-  jacoco {
-    enabled = true
-    dumpOnExit = true
-  }
-  finalizedBy(tasks.named("jacocoTestReport"))
-}
-
-tasks.withType(JacocoCoverageVerification).configureEach {
-  setEnabled(true)
-}
-
-tasks.withType(JacocoReport).configureEach {
-  setEnabled(true)
-  reports {
-    xml.enabled = true
-  }
-}
 
 allprojects {
   group = rootProject.group
@@ -110,6 +90,7 @@ allprojects {
 
   apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
   apply plugin: "idea"
+  apply plugin: "jacoco"
   apply plugin: "java-library"
 
   tasks.withType(GenerateIdeaModule).configureEach {
@@ -132,6 +113,30 @@ allprojects {
     gradleVersion(VERSIONS.gradle.toString())
   }
 
+  tasks.withType(Test).configureEach {
+    useJUnitPlatform {
+      failFast = true
+    }
+    scanForTestClasses(false)
+    jacoco {
+      enabled = true
+      dumpOnExit = true
+    }
+    finalizedBy(tasks.named("jacocoTestReport"))
+  }
+
+  tasks.withType(JacocoCoverageVerification).configureEach {
+    setEnabled(true)
+  }
+
+  tasks.withType(JacocoReport).configureEach {
+    setEnabled(true)
+    reports {
+      xml.enabled = true
+    }
+  }
+
+
   repositories {
     jcenter()
   }
@@ -146,6 +151,14 @@ allprojects {
     implementation platform("org.junit:junit-bom:$VERSIONS.junit")
     implementation platform("io.cucumber:cucumber-core:$VERSIONS.cucumber")
     implementation platform("org.springframework.boot:spring-boot-dependencies:$VERSIONS.springBoot")
+
+    testImplementation "de.monochromata.cucumber:reporting-plugin:$VERSIONS.cucumberReporting"
+    testImplementation("io.cucumber:cucumber-junit-platform-engine")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.junit.platform:junit-platform-console")
+    testRuntimeOnly("org.junit.platform:junit-platform-runner")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
   }
 }
 
@@ -154,11 +167,4 @@ dependencies {
   implementation(project(":integrational"))
   implementation(project(":infrastructure"))
   implementation(project(":system"))
-
-  implementation("io.cucumber:cucumber-junit-platform-engine")
-  implementation("org.junit.jupiter:junit-jupiter-api")
-  implementation("org.junit.jupiter:junit-jupiter-engine")
-  runtimeOnly("org.junit.platform:junit-platform-console")
-  runtimeOnly("org.junit.platform:junit-platform-runner")
-  runtimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }

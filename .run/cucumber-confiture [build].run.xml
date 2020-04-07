@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Tests in 'features'" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="cucumber-confiture [build]" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -10,13 +10,12 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="test" />
+          <option value="build" />
         </list>
       </option>
       <option name="vmOptions" value="" />
     </ExternalSystemSettings>
-    <extension name="coverage" runner="jacoco" />
-    <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
+    <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
     <method v="2" />
   </configuration>
 </component>

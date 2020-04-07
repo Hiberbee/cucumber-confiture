@@ -97,7 +97,9 @@ public class SeleniumStepDefinitions {
     if (this.driver != null) {
       if (scenario.isFailed())
         new ScreenShotGenerator(this.driver)
-            .accept(new ScreenShotNamer(Paths.get("build/reports/screenshots")).apply(scenario));
+            .accept(
+                new ScreenShotNamer(Paths.get("build/reports/screenshots"))
+                    .apply(scenario.getName().replace("\"", "")));
 
       this.driver.quit();
     }

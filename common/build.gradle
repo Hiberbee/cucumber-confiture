@@ -13,6 +13,7 @@ repositories {
 
 def VERSIONS = [
   assertj             : "3.15.0",
+  mockito             : "3.3.3",
   cucumber            : "5.6.0",
   gradle              : "6.3",
   cacheApi            : "1.1.1",
@@ -47,6 +48,7 @@ dependencies {
 
   api("io.cucumber:cucumber-core")
   api("io.cucumber:cucumber-java")
+  api("org.mockito:mockito-core:$VERSIONS.mockito")
   api("org.jetbrains:annotations:$VERSIONS.jetbrainsAnnotations")
   api("org.junit.jupiter:junit-jupiter-api")
   api("org.junit.jupiter:junit-jupiter-engine")

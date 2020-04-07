@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
   implementation("com.hiberbee.cucumber:common:$project.version")
+  testImplementation("com.hiberbee.cucumber:common:$project.version")
 
   annotationProcessor("org.projectlombok:lombok:$VERSIONS.lombok")
 

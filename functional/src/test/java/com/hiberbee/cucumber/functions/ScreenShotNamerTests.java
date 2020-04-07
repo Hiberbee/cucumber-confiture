@@ -24,25 +24,17 @@
 
 package com.hiberbee.cucumber.functions;
 
-import org.jetbrains.annotations.NotNull;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.nio.file.Path;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.function.Function;
+import java.nio.file.Paths;
 
-public class ScreenShotNamer implements Function<String, Path> {
+public class ScreenShotNamerTests {
 
-  private final Path basePath;
-
-  public ScreenShotNamer(@NotNull final Path basePath) {
-    this.basePath = basePath;
-  }
-
-  @Override
-  public Path apply(@NotNull final String name) {
-    return this.basePath.resolve(
-        String.format(
-            "%s-%s.png", name, DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(OffsetDateTime.now())));
+  @Test
+  void apply() {
+    final var namer = new ScreenShotNamer(Paths.get("/tmp"));
+    final var name = "fake";
+    Assertions.assertThat(namer.apply(name)).asString().startsWith("/tmp/fake");
   }
 }

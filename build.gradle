@@ -3,6 +3,7 @@ plugins {
   id("com.github.ben-manes.versions") version "0.28.0"
   id("idea")
   id("jacoco")
+  id("org.sonarqube") version "2.8"
   id("org.jetbrains.gradle.plugin.idea-ext") version "0.7"
 }
 
@@ -21,6 +22,14 @@ def VERSIONS = [
   junit               : "5.6.1",
   jetbrainsAnnotations: "19.0"
 ]
+
+sonarqube {
+  properties {
+    property "sonar.projectKey", "cucumber-confiture"
+    property "sonar.organization", "hiberbee"
+    property "sonar.host.url", "https://sonarcloud.io/"
+  }
+}
 
 idea {
   project {

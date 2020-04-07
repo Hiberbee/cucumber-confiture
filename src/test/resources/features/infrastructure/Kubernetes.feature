@@ -1,4 +1,3 @@
-@k8s
 Feature: Kubernetes client
 
   Scenario: Kubernetes connection

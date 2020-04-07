@@ -1,4 +1,3 @@
-@k8s
 Feature: Docker client
 
   Scenario: Docker connection

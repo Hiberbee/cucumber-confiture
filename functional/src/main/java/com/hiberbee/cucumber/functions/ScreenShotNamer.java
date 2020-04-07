@@ -43,9 +43,9 @@ public class ScreenShotNamer implements Function<Scenario, Path> {
   @Override
   public Path apply(@NotNull final Scenario scenario) {
     return this.basePath.resolve(
-      String.format(
-        "%s-%s.png",
-        DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(OffsetDateTime.now()),
-        scenario.getName().replace("\"", "")));
+        String.format(
+            "%s-%s.png",
+            DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(OffsetDateTime.now()),
+            scenario.getName().replace("\"", "")));
   }
 }

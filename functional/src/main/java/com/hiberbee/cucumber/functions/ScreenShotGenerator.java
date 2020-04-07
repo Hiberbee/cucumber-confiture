@@ -43,9 +43,9 @@ public class ScreenShotGenerator implements Consumer<Path> {
   @Override
   public void accept(final Path path) {
     Try.call(() -> Files.createDirectories(path))
-      .andThenTry((it) -> Files.createFile(it.resolve(path)))
-      .andThenTry(
-        (it) ->
-          Files.write(it, ((TakesScreenshot) this.driver).getScreenshotAs(OutputType.BYTES)));
+        .andThenTry((it) -> Files.createFile(it.resolve(path)))
+        .andThenTry(
+            (it) ->
+                Files.write(it, ((TakesScreenshot) this.driver).getScreenshotAs(OutputType.BYTES)));
   }
 }

@@ -54,10 +54,10 @@ public class CommonDefinitions {
   @ParameterType(value = "(.*)")
   public URL url(final String value) throws AssertionError {
     return Try.call(() -> URI.create(value))
-      .andThenTry(URI::toURL)
-      .toOptional()
-      .orElseThrow(
-        () -> new CucumberException(String.format("URL parameter %s is invalid", value)));
+        .andThenTry(URI::toURL)
+        .toOptional()
+        .orElseThrow(
+            () -> new CucumberException(String.format("URL parameter %s is invalid", value)));
   }
 
   @Given("{url} base url")

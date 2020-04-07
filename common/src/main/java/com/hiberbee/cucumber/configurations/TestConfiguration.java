@@ -24,7 +24,7 @@
 
 package com.hiberbee.cucumber.configurations;
 
-import com.hiberbee.cucumber.annotations.EnableCucumberCache;
+import com.hiberbee.cucumber.annotations.EnableCucumberState;
 import io.cucumber.junit.platform.engine.Cucumber;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.cache.CacheManager;
@@ -35,7 +35,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @Cucumber
 @EnableAutoConfiguration
-@EnableCucumberCache
+@EnableCucumberState
 @ComponentScan("com.hiberbee.cucumber")
 @PropertySource("classpath:application.yml")
 public class TestConfiguration {

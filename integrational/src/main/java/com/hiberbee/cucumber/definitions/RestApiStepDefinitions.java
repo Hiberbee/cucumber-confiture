@@ -24,7 +24,7 @@
 
 package com.hiberbee.cucumber.definitions;
 
-import com.hiberbee.cucumber.annotations.EnableCucumberCache;
+import com.hiberbee.cucumber.annotations.EnableCucumberState;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -43,7 +43,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-@EnableCucumberCache
+@EnableCucumberState
 public class RestApiStepDefinitions {
 
   @Value("#{cacheManager.getCache('feature')}")
@@ -52,8 +52,7 @@ public class RestApiStepDefinitions {
   @Value("#{cacheManager.getCache('scenario')}")
   private Cache scenario;
 
-  @Autowired
-  private RestTemplate restTemplate;
+  @Autowired private RestTemplate restTemplate;
 
   @ParameterType("(GET|POST|PUT|PATCH|TRACE|DELETE|OPTIONS|HEAD)")
   public HttpMethod httpMethod(final String httpMethod) {
@@ -68,28 +67,28 @@ public class RestApiStepDefinitions {
   @When("I make {httpMethod} request")
   public void makeRequest(final HttpMethod httpMethod) {
     final var response =
-      Try.call(() -> this.feature.get("baseUrl", URL.class))
-        .andThenTry(URL::toURI)
-        .andThenTry(
-          uri ->
-            this.restTemplate.getRequestFactory().createRequest(uri, httpMethod).execute())
-        .toOptional()
-        .orElseThrow();
+        Try.call(() -> this.feature.get("baseUrl", URL.class))
+            .andThenTry(URL::toURI)
+            .andThenTry(
+                uri ->
+                    this.restTemplate.getRequestFactory().createRequest(uri, httpMethod).execute())
+            .toOptional()
+            .orElseThrow();
     this.scenario.put("response", response);
   }
 
   @Then("response status code is {httpStatus}")
   public void responseStatusCodeIs(final @NotNull HttpStatus httpStatus) throws IOException {
     Try.success(this.scenario.get("response", ClientHttpResponse.class))
-      .andThenTry(ClientHttpResponse::getRawStatusCode)
-      .andThenTry(Assertions.assertThat(httpStatus.value())::isEqualTo)
-      .ifFailure(e -> Assertions.fail(e.getMessage()));
+        .andThenTry(ClientHttpResponse::getRawStatusCode)
+        .andThenTry(Assertions.assertThat(httpStatus.value())::isEqualTo)
+        .ifFailure(e -> Assertions.fail(e.getMessage()));
   }
 
   @Then("^(Accept|Content-Type) header is(?:(|not)) (.+)$")
   public void responseHeaderIs(final String key, final String not, final String value) {
     Try.success(this.scenario.get("response", ClientHttpResponse.class))
-      .andThenTry(ClientHttpResponse::getHeaders)
-      .andThenTry(headers -> Assertions.assertThat(headers).containsEntry(key, List.of(value)));
+        .andThenTry(ClientHttpResponse::getHeaders)
+        .andThenTry(headers -> Assertions.assertThat(headers).containsEntry(key, List.of(value)));
   }
 }

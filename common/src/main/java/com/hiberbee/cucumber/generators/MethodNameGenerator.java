@@ -36,9 +36,9 @@ public class MethodNameGenerator implements KeyGenerator {
   @NotNull
   @Override
   public Object generate(
-    @NotNull final Object target,
-    @NotNull final Method method,
-    @NotNull final Object @NotNull ... params) {
+      @NotNull final Object target,
+      @NotNull final Method method,
+      @NotNull final Object @NotNull ... params) {
     return method.getName();
   }
 }

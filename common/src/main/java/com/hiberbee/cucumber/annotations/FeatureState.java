@@ -9,5 +9,4 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Cacheable(cacheNames = "feature", keyGenerator = "methodNameGenerator")
-public @interface FeatureState {
-}
+public @interface FeatureState {}

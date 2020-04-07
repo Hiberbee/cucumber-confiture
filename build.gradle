@@ -59,13 +59,17 @@ class CucumberFeature extends JavaExec {
   }
 }
 
-tasks.register("ui", CucumberFeature) {
-  args += ["--include-tag", "ui", "--select-package", "features"]
+tasks.register("functional", CucumberFeature) {
+  args += ["--include-tag", "ui", "--select-package", "features.functional"]
+}
+tasks.register("integrational", CucumberFeature) {
+  args += ["--select-package", "features.integrational"]
 }
 tasks.register("infrastructure", CucumberFeature) {
-  args += ["--include-tag", "k8s", "--select-package", "features"]
+  args += ["--select-package", "features.infrastructure"]
 }
-test {
+
+tasks.withType(Test).configureEach {
   useJUnitPlatform {
     failFast = true
   }
@@ -76,9 +80,6 @@ test {
   finalizedBy(tasks.named("jacocoTestReport"))
 }
 
-jacoco {
-  toolVersion = "0.8.5"
-}
 tasks.withType(JacocoCoverageVerification).configureEach {
   setEnabled(true)
 }

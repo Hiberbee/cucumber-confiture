@@ -22,22 +22,23 @@
  * SOFTWARE.
  */
 
-package com.hiberbee.cucumber.definitions;
+package com.hiberbee.cucumber.annotations;
 
-import com.github.dockerjava.api.DockerClient;
-import io.cucumber.java.en.Given;
-import lombok.extern.java.Log;
-import org.assertj.core.api.Assertions;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.cache.CacheType;
+import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.AdviceMode;
 
-@Log
-public class DockerStepDefinitions {
+import java.lang.annotation.*;
 
-  @Autowired private DockerClient client;
-
-  @Given("docker version is {string}")
-  public void dockerIsRunningOn(final String version) {
-    Assertions.assertThat(this.client.versionCmd().exec().toString())
-        .contains(String.format("version=%s", version));
-  }
-}
+@Documented
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@EnableCaching(mode = AdviceMode.PROXY)
+@AutoConfigureCache(cacheProvider = CacheType.SIMPLE)
+@CacheConfig(
+    keyGenerator = "methodNameGenerator",
+    cacheNames = {"suite", "hook", "feature", "scenario"})
+public @interface EnableCucumberState {}

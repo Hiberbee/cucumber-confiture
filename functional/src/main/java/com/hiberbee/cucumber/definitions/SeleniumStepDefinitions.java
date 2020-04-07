@@ -66,11 +66,6 @@ public class SeleniumStepDefinitions {
     return WindowState.fromString(value.toUpperCase());
   }
 
-  @After("@ui")
-  public void maximizeWindow(@NotNull final Scenario scenario) {
-    if (scenario.isFailed()) this.driver.manage().window().maximize();
-  }
-
   @Given("window state is {windowState}")
   public void windowStateIs(@NotNull final WindowState state) {
     switch (state) {
@@ -92,9 +87,9 @@ public class SeleniumStepDefinitions {
   @Given("I go to {string} url")
   public void iCanOpenWebPageWithWebDriver(@NotNull final String uri) {
     Try.call(Objects.requireNonNull(this.featureState.get("baseUrl", URL.class))::toURI)
-      .andThenTry(url -> url.resolve(uri).toString())
-      .ifSuccess(url -> this.driver.get(url))
-      .ifFailure(i -> this.driver.get(uri));
+        .andThenTry(url -> url.resolve(uri).toString())
+        .ifSuccess(url -> this.driver.get(url))
+        .ifFailure(i -> this.driver.get(uri));
   }
 
   @After("@ui")
@@ -102,7 +97,7 @@ public class SeleniumStepDefinitions {
     if (this.driver != null) {
       if (scenario.isFailed())
         new ScreenShotGenerator(this.driver)
-          .accept(new ScreenShotNamer(Paths.get("build/reports/screenshots")).apply(scenario));
+            .accept(new ScreenShotNamer(Paths.get("build/reports/screenshots")).apply(scenario));
 
       this.driver.quit();
     }
@@ -111,24 +106,25 @@ public class SeleniumStepDefinitions {
   @Given("{browser} web browser")
   public void webBrowser(@NotNull final DriverManagerType browser) {
     WebDriverManager.getInstance(browser).setup();
-    @SuppressWarnings("unchecked") final var maybeDriver =
-      (Optional<WebDriver>)
-        ReflectionUtils.tryToLoadClass(browser.browserClass())
-          .andThenTry(ReflectionUtils::newInstance)
-          .toOptional();
+    @SuppressWarnings("unchecked")
+    final var maybeDriver =
+        (Optional<WebDriver>)
+            ReflectionUtils.tryToLoadClass(browser.browserClass())
+                .andThenTry(ReflectionUtils::newInstance)
+                .toOptional();
     this.driver = maybeDriver.orElseGet(ChromeDriver::new);
   }
 
   @And("^(page source|title) should(?:(| not)) contain (.+)$")
   public void pageTitleShouldContain(
-    final String location, final String not, final String expected) {
+      final String location, final String not, final String expected) {
     final Function<? super WebDriver, String> extractingFunction =
-      webDriver -> {
-        if (location.equals("title")) return webDriver.getTitle();
-        return webDriver.getPageSource();
-      };
+        webDriver -> {
+          if (location.equals("title")) return webDriver.getTitle();
+          return webDriver.getPageSource();
+        };
     Assertions.assertThat(this.driver)
-      .extracting(extractingFunction)
-      .matches(actual -> not.isBlank() == actual.contains(expected));
+        .extracting(extractingFunction)
+        .matches(actual -> not.isBlank() == actual.contains(expected));
   }
 }

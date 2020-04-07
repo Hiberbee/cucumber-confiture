@@ -27,5 +27,4 @@ package com.hiberbee.cucumber.definitions;
 import io.cucumber.junit.platform.engine.Cucumber;
 
 @Cucumber
-public class Features {
-}
+public class Features {}

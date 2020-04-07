@@ -22,24 +22,30 @@
  * SOFTWARE.
  */
 
-package com.hiberbee.cucumber.annotations;
+package com.hiberbee.cucumber.configurations;
 
-import org.springframework.boot.autoconfigure.cache.CacheType;
-import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.AdviceMode;
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.core.DefaultDockerClientConfig;
+import com.github.dockerjava.core.DockerClientBuilder;
+import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import java.lang.annotation.*;
+@Configuration
+public class InfrastructureConfiguration {
 
-@Documented
-@Inherited
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@EnableCaching(mode = AdviceMode.PROXY)
-@AutoConfigureCache(cacheProvider = CacheType.SIMPLE)
-@CacheConfig(
-  keyGenerator = "methodNameGenerator",
-  cacheNames = {"suite", "hook", "feature", "scenario"})
-public @interface EnableCucumberCache {
+  @Bean
+  public KubernetesClient kubernetesClient() {
+    return new DefaultKubernetesClient();
+  }
+
+  @Bean
+  public DockerClient dockerClient() {
+    final var config =
+        DefaultDockerClientConfig.createDefaultConfigBuilder()
+            .withRegistryUrl("https://index.docker.io/v2/")
+            .build();
+    return DockerClientBuilder.getInstance(config).build();
+  }
 }

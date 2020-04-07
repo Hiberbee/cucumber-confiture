@@ -8,29 +8,17 @@
 
 package com.hiberbee.cucumber.definitions;
 
-import io.cucumber.java.Before;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.assertj.core.api.Assertions;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class KubernetesStepDefinitions {
 
-  private KubernetesClient kubernetesClient;
-
-  @Before("@K8S")
-  public void initKubernetesClient() {
-    this.kubernetesClient = new DefaultKubernetesClient();
-  }
+  @Autowired private KubernetesClient kubernetesClient;
 
   @Given("kubernetes is running on {string}")
   public void kubernetesIsRunningOn(final String host) {
     Assertions.assertThat(this.kubernetesClient.getMasterUrl().getHost()).contains(host);
-  }
-
-  @And("kubernetes version is greater than {float}")
-  public void kubernetesVersionIsGreaterThan(final Float version) {
-    Assertions.assertThat(this.kubernetesClient.getApiVersion()).isEqualTo(version.toString());
   }
 }

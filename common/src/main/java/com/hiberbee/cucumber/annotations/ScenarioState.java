@@ -9,5 +9,4 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Cacheable(value = "scenario", keyGenerator = "methodNameGenerator")
-public @interface ScenarioState {
-}
+public @interface ScenarioState {}

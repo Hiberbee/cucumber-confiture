@@ -1,4 +1,3 @@
-@rest
 Ability: Automate REST API testing
 
   Scenario: Test HTTP GET request

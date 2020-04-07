@@ -24,7 +24,7 @@
 
 package com.hiberbee.cucumber.definitions;
 
-import com.hiberbee.cucumber.annotations.EnableCucumberState;
+import com.hiberbee.cucumber.annotations.ScenarioState;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -42,7 +42,6 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URL;
 import java.util.List;
 
-@EnableCucumberState
 public class RestApiStepDefinitions {
 
   @Value("#{cacheManager.getCache('feature')}")
@@ -63,6 +62,7 @@ public class RestApiStepDefinitions {
     return HttpStatus.resolve(Integer.parseInt(httpStatus));
   }
 
+  @ScenarioState
   @When("I make {httpMethod} request")
   public void makeRequest(final HttpMethod httpMethod) {
     final var response =

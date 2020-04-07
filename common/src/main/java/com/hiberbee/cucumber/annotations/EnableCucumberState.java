@@ -24,8 +24,6 @@
 
 package com.hiberbee.cucumber.annotations;
 
-import org.springframework.boot.autoconfigure.cache.CacheType;
-import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.AdviceMode;
@@ -37,7 +35,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @EnableCaching(mode = AdviceMode.PROXY)
-@AutoConfigureCache(cacheProvider = CacheType.SIMPLE)
 @CacheConfig(
     keyGenerator = "methodNameGenerator",
     cacheNames = {"suite", "hook", "feature", "scenario"})

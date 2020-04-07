@@ -1,3 +1,4 @@
+@ui
 Feature: Multi-module Gradle project
 
   Background:
@@ -5,8 +6,9 @@ Feature: Multi-module Gradle project
     And window state is minimized
 
   Scenario: Included build depenencies
-    Given I can open https://google.com web page
+    Given https://google.com base url
+    When I go to '/' url
     And title should contain Google
-    When I can open https://microsoft.com web page
+    When I go to 'https://microsoft.com' url
     Then title should contain Microsoft
     But page source should not contain Google

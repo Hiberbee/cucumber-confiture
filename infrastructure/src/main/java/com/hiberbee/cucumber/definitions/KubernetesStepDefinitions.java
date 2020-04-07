@@ -19,14 +19,14 @@ public class KubernetesStepDefinitions {
 
   private KubernetesClient kubernetesClient;
 
-  @Before
+  @Before("@K8S")
   public void initKubernetesClient() {
     this.kubernetesClient = new DefaultKubernetesClient();
   }
 
   @Given("kubernetes is running on {string}")
   public void kubernetesIsRunningOn(final String host) {
-    Assertions.assertThat(host).isEqualTo(this.kubernetesClient.getMasterUrl().getHost());
+    Assertions.assertThat(this.kubernetesClient.getMasterUrl().getHost()).contains(host);
   }
 
   @And("kubernetes version is greater than {float}")

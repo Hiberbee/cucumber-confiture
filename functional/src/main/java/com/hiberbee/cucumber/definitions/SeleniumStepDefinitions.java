@@ -24,6 +24,8 @@
 
 package com.hiberbee.cucumber.definitions;
 
+import com.hiberbee.cucumber.functions.ScreenShotGenerator;
+import com.hiberbee.cucumber.functions.ScreenShotNamer;
 import io.cucumber.java.After;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.Scenario;
@@ -38,9 +40,12 @@ import org.junit.platform.commons.util.ReflectionUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.devtools.browser.model.WindowState;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.Cache;
 
-import java.net.URI;
 import java.net.URL;
+import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -48,23 +53,20 @@ public class SeleniumStepDefinitions {
 
   private WebDriver driver;
 
-  @ParameterType(value = "(Chrome|Edge|Opera|Firefox)", name = "browser")
+  @Value("#{cacheManager.getCache('feature')}")
+  private Cache featureState;
+
+  @ParameterType(value = "(Chrome|Edge|Opera|Firefox)")
   public DriverManagerType browser(@NotNull final String value) {
     return DriverManagerType.valueOf(value.toUpperCase());
   }
 
-  @ParameterType(value = "(maximized|minimized|fullscreen|normal)", name = "windowState")
+  @ParameterType("(maximized|minimized|fullscreen|normal)")
   public WindowState windowState(@NotNull final String value) {
     return WindowState.fromString(value.toUpperCase());
   }
 
-  @ParameterType(value = "(.+)", name = "url")
-  public URL url(final String value) {
-    final var url = Try.call(() -> URI.create(value)).andThenTry(URI::toURL).toOptional();
-    return url.orElseThrow();
-  }
-
-  @After
+  @After("@ui")
   public void maximizeWindow(@NotNull final Scenario scenario) {
     if (scenario.isFailed()) this.driver.manage().window().maximize();
   }
@@ -87,32 +89,46 @@ public class SeleniumStepDefinitions {
     }
   }
 
-  @Given("I can open {url} web page")
-  public void iCanOpenWebPageWithWebDriver(@NotNull final URL url) {
-    this.driver.get(url.toExternalForm());
+  @Given("I go to {string} url")
+  public void iCanOpenWebPageWithWebDriver(@NotNull final String uri) {
+    Try.call(Objects.requireNonNull(this.featureState.get("baseUrl", URL.class))::toURI)
+      .andThenTry(url -> url.resolve(uri).toString())
+      .ifSuccess(url -> this.driver.get(url))
+      .ifFailure(i -> this.driver.get(uri));
   }
 
-  @After
-  public void quitWebDriver() {
-    if (this.driver != null) this.driver.quit();
-  }
+  @After("@ui")
+  public void quitWebDriver(final Scenario scenario) {
+    if (this.driver != null) {
+      if (scenario.isFailed())
+        new ScreenShotGenerator(this.driver)
+          .accept(new ScreenShotNamer(Paths.get("build/reports/screenshots")).apply(scenario));
 
+      this.driver.quit();
+    }
+  }
 
   @Given("{browser} web browser")
   public void webBrowser(@NotNull final DriverManagerType browser) {
     WebDriverManager.getInstance(browser).setup();
-    @SuppressWarnings("unchecked") final var maybeDriver = (Optional<WebDriver>) ReflectionUtils
-      .tryToLoadClass(browser.browserClass())
-      .andThenTry(ReflectionUtils::newInstance).toOptional();
+    @SuppressWarnings("unchecked") final var maybeDriver =
+      (Optional<WebDriver>)
+        ReflectionUtils.tryToLoadClass(browser.browserClass())
+          .andThenTry(ReflectionUtils::newInstance)
+          .toOptional();
     this.driver = maybeDriver.orElseGet(ChromeDriver::new);
   }
 
   @And("^(page source|title) should(?:(| not)) contain (.+)$")
-  public void pageTitleShouldContain(final String location, final String not, final String expected) {
-    final Function<? super WebDriver, String> extractingFunction = webDriver -> {
-      if (location.equals("title")) return webDriver.getTitle();
-      return webDriver.getPageSource();
-    };
-    Assertions.assertThat(this.driver).extracting(extractingFunction).matches(actual -> not.isBlank() == actual.contains(expected));
+  public void pageTitleShouldContain(
+    final String location, final String not, final String expected) {
+    final Function<? super WebDriver, String> extractingFunction =
+      webDriver -> {
+        if (location.equals("title")) return webDriver.getTitle();
+        return webDriver.getPageSource();
+      };
+    Assertions.assertThat(this.driver)
+      .extracting(extractingFunction)
+      .matches(actual -> not.isBlank() == actual.contains(expected));
   }
 }

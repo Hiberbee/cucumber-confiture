@@ -1,5 +1,4 @@
 plugins {
-  id("idea")
   id("java-library")
 }
 
@@ -9,11 +8,15 @@ repositories {
 
 def VERSIONS = [
   kubernetesClient: "4.9.0",
-  self            : rootProject.version,
+  dockerClient    : "3.2.1",
+  lombok          : "1.18.12"
 ]
 
 dependencies {
-  implementation("com.hiberbee.cucumber:common:$VERSIONS.self")
+  implementation("com.hiberbee.cucumber:common:$project.version")
 
+  annotationProcessor("org.projectlombok:lombok:$VERSIONS.lombok")
+
+  implementation("com.github.docker-java:docker-java:$VERSIONS.dockerClient")
   implementation("io.fabric8:kubernetes-client:$VERSIONS.kubernetesClient")
 }

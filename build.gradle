@@ -2,6 +2,7 @@ plugins {
   id("java-library")
   id("com.github.ben-manes.versions") version "0.28.0"
   id("idea")
+  id("jacoco")
   id("org.jetbrains.gradle.plugin.idea-ext") version "0.7"
 }
 
@@ -9,13 +10,16 @@ group = "com.hiberbee.cucumber"
 version = "1.0.0-SNAPSHOT"
 
 repositories {
-  jcenter()
+  mavenCentral()
 }
 
 def VERSIONS = [
-  gradle  : "6.3",
-  cucumber: "5.6.0",
-  junit   : "5.6.1"
+  gradle              : "6.3",
+  cucumber            : "5.6.0",
+  lombok              : "1.18.12",
+  springBoot          : "2.2.6.RELEASE",
+  junit               : "5.6.1",
+  jetbrainsAnnotations: "19.0"
 ]
 
 idea {
@@ -31,30 +35,82 @@ idea {
       }
     }
     module {
-      setExcludeDirs(files("gradle").toSet())
+      setExcludeDirs(files("gradle", "build").toSet())
     }
+  }
+}
+
+class CucumberFeature extends JavaExec {
+
+  CucumberFeature() {
+    super.setGroup("features")
+    super.dependsOn(project.tasks.getByName("testClasses"))
+    super.outputs.dir("build/reports")
+    super.setMain("org.junit.platform.console.ConsoleLauncher")
+    super.
+      setClasspath(project.
+        convention.
+        getPlugin(JavaPluginConvention.class).
+        getSourceSets().
+        findByName("test").
+        runtimeClasspath)
+    super.args("--include-engine", "cucumber", "--reports-dir", "build/reports")
+    super.finalizedBy(project.tasks.getByName("jacocoTestReport"))
+  }
+}
+
+tasks.register("ui", CucumberFeature) {
+  args += ["--include-tag", "ui", "--select-package", "features"]
+}
+tasks.register("infrastructure", CucumberFeature) {
+  args += ["--include-tag", "k8s", "--select-package", "features"]
+}
+test {
+  useJUnitPlatform {
+    failFast = true
+  }
+  jacoco {
+    enabled = true
+    dumpOnExit = true
+  }
+  finalizedBy(tasks.named("jacocoTestReport"))
+}
+
+jacoco {
+  toolVersion = "0.8.5"
+}
+tasks.withType(JacocoCoverageVerification).configureEach {
+  setEnabled(true)
+}
+
+tasks.withType(JacocoReport).configureEach {
+  setEnabled(true)
+  reports {
+    xml.enabled = true
   }
 }
 
 allprojects {
   group = rootProject.group
   version = rootProject.version
+
   apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
   apply plugin: "idea"
   apply plugin: "java-library"
 
   tasks.withType(GenerateIdeaModule).configureEach {
-    module.setExcludeDirs(files("gradle").toSet())
+    module.setExcludeDirs(files("gradle", "build").toSet())
     module.setInheritOutputDirs(true)
     module.setDownloadJavadoc(false)
     module.setDownloadSources(true)
   }
 
   tasks.withType(JavaCompile).configureEach {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    setSourceCompatibility(JavaVersion.VERSION_11)
+    setTargetCompatibility(JavaVersion.VERSION_11)
     it.options.setFork(true)
     it.options.setIncremental(true)
+    dependsOn(tasks.named("processResources"))
   }
 
   tasks.withType(Wrapper).configureEach {
@@ -66,17 +122,29 @@ allprojects {
     jcenter()
   }
 
+  configurations {
+    compileOnly {
+      extendsFrom(annotationProcessor)
+    }
+  }
+
   dependencies {
     implementation platform("org.junit:junit-bom:$VERSIONS.junit")
     implementation platform("io.cucumber:cucumber-core:$VERSIONS.cucumber")
+    implementation platform("org.springframework.boot:spring-boot-dependencies:$VERSIONS.springBoot")
   }
 }
 
 dependencies {
   implementation(project(":functional"))
+  implementation(project(":integrational"))
+  implementation(project(":infrastructure"))
+  implementation(project(":system"))
 
-  testRuntime("org.junit.jupiter:junit-jupiter-engine")
-  testRuntime("org.junit.platform:junit-platform-launcher")
-  testRuntime("org.junit.platform:junit-platform-runner")
-  testRuntime("org.junit.vintage:junit-vintage-engine")
+  implementation("io.cucumber:cucumber-junit-platform-engine")
+  implementation("org.junit.jupiter:junit-jupiter-api")
+  implementation("org.junit.jupiter:junit-jupiter-engine")
+  runtimeOnly("org.junit.platform:junit-platform-console")
+  runtimeOnly("org.junit.platform:junit-platform-runner")
+  runtimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }

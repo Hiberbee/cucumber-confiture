@@ -12,19 +12,25 @@ repositories {
 }
 
 def VERSIONS = [
+  assertj             : "3.15.0",
   cucumber            : "5.6.0",
   gradle              : "6.3",
-  jetbrainsAnnotations: "19.0",
+  cacheApi            : "1.1.1",
+  jetbrainsAnnotations: "19.0.0",
+  springBoot          : "2.2.6.RELEASE",
   junit               : "5.6.1",
-  slf4j               : "2.0.0-alpha1",
-  assertj             : "3.15.0",
+  lombok              : "1.18.12",
 ]
 
 wrapper {
   distributionType(Wrapper.DistributionType.ALL)
   gradleVersion(VERSIONS.gradle)
 }
-
+configurations {
+  compileOnly {
+    extendsFrom(annotationProcessor)
+  }
+}
 idea {
   module {
     setInheritOutputDirs(true)
@@ -36,12 +42,17 @@ idea {
 dependencies {
   implementation platform("org.junit:junit-bom:$VERSIONS.junit")
   implementation platform("io.cucumber:cucumber-core:$VERSIONS.cucumber")
+  implementation platform("org.springframework.boot:spring-boot-dependencies:$VERSIONS.springBoot")
+  annotationProcessor("org.projectlombok:lombok:$VERSIONS.lombok")
 
   api("io.cucumber:cucumber-core")
   api("io.cucumber:cucumber-java")
-  api("io.cucumber:cucumber-junit-platform-engine")
+  api("org.jetbrains:annotations:$VERSIONS.jetbrainsAnnotations")
   api("org.junit.jupiter:junit-jupiter-api")
   api("org.junit.jupiter:junit-jupiter-engine")
   api("org.assertj:assertj-core:$VERSIONS.assertj")
-  implementation("org.slf4j:slf4j-simple:$VERSIONS.slf4j")
+  api("org.springframework.boot:spring-boot-starter-cache")
+  api("io.cucumber:cucumber-spring")
+  implementation("org.springframework.boot:spring-boot-starter-test")
+  implementation("io.cucumber:cucumber-junit-platform-engine")
 }

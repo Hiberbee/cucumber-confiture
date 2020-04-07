@@ -1,10 +1,8 @@
 plugins {
-  id("idea")
   id("java-library")
 }
 
 def VERSIONS = [
-  rootProject     : project.version,
   webdriverManager: "3.8.1",
   lombok          : "1.18.12",
   webdriver       : "4.0.0-alpha-5"
@@ -15,8 +13,10 @@ repositories {
 }
 
 dependencies {
-  implementation("com.hiberbee.cucumber:common:$VERSIONS.rootProject")
+  implementation("com.hiberbee.cucumber:common:$project.version")
+
   annotationProcessor("org.projectlombok:lombok:$VERSIONS.lombok")
+
   implementation("org.seleniumhq.selenium:selenium-support:$VERSIONS.webdriver")
   implementation("org.seleniumhq.selenium:selenium-chrome-driver:$VERSIONS.webdriver")
   implementation("org.seleniumhq.selenium:selenium-firefox-driver:$VERSIONS.webdriver")

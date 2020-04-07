@@ -31,6 +31,7 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
+import io.cucumber.spring.CucumberContextConfiguration;
 import org.junit.platform.commons.function.Try;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,7 +40,10 @@ import org.springframework.cache.Cache;
 import java.net.URI;
 import java.net.URL;
 
-@SpringBootTest(classes = TestConfiguration.class)
+@SpringBootTest(
+    classes = TestConfiguration.class,
+    webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@CucumberContextConfiguration
 public class CommonDefinitions {
 
   @Value("#{cacheManager.getCache('feature')}")

@@ -39,7 +39,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
@@ -78,7 +77,7 @@ public class RestApiStepDefinitions {
   }
 
   @Then("response status code is {httpStatus}")
-  public void responseStatusCodeIs(final @NotNull HttpStatus httpStatus) throws IOException {
+  public void responseStatusCodeIs(final @NotNull HttpStatus httpStatus) {
     Try.success(this.scenario.get("response", ClientHttpResponse.class))
         .andThenTry(ClientHttpResponse::getRawStatusCode)
         .andThenTry(Assertions.assertThat(httpStatus.value())::isEqualTo)

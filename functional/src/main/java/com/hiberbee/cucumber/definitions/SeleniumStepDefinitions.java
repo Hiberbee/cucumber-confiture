@@ -69,9 +69,6 @@ public class SeleniumStepDefinitions {
   @Given("window state is {windowState}")
   public void windowStateIs(@NotNull final WindowState state) {
     switch (state) {
-      case NORMAL:
-      default:
-        break;
       case MAXIMIZED:
         this.driver.manage().window().maximize();
         break;
@@ -80,6 +77,9 @@ public class SeleniumStepDefinitions {
         break;
       case FULLSCREEN:
         this.driver.manage().window().fullscreen();
+        break;
+      case NORMAL:
+      default:
         break;
     }
   }

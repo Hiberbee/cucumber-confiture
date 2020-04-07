@@ -26,9 +26,9 @@ def VERSIONS = [
 sonarqube {
   properties {
     property "sonar.projectKey", "cucumber-confiture"
-    property "sonar.login", System.getenv("SONARQUBE_TOKEN")
     property "sonar.organization", "hiberbee"
-    property "sonar.host.url", "https://sonarcloud.io/"
+    property "sonar.host.url", "https://sonarcloud.io"
+    property "sonar.login", "f8a7b63196fc3371b752dd8ef3111208e2cb3c8e"
   }
 }
 
@@ -69,14 +69,17 @@ class CucumberFeature extends JavaExec {
   }
 }
 
-tasks.register("functional", CucumberFeature) {
+tasks.register("functionalTest", CucumberFeature) {
   args += ["--include-tag", "ui", "--select-package", "features.functional"]
 }
-tasks.register("integrational", CucumberFeature) {
+tasks.register("integrationalTest", CucumberFeature) {
   args += ["--select-package", "features.integrational"]
 }
-tasks.register("infrastructure", CucumberFeature) {
+tasks.register("infrastructureTest", CucumberFeature) {
   args += ["--select-package", "features.infrastructure"]
+}
+tasks.register("systemTest", CucumberFeature) {
+  args += ["--select-package", "features.system"]
 }
 
 tasks.withType(Test).configureEach {

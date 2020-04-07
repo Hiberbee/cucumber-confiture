@@ -32,7 +32,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableCucumberState
-public class RestContextConfiguration {
+public class IntegrationalConfiguration {
 
   @Bean
   public RestTemplate restTemplate() {

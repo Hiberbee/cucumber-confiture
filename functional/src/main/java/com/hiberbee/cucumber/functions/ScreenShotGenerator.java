@@ -24,6 +24,7 @@
 
 package com.hiberbee.cucumber.functions;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.function.Try;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -34,18 +35,18 @@ import java.nio.file.Path;
 import java.util.function.Consumer;
 
 public class ScreenShotGenerator implements Consumer<Path> {
+
   private final WebDriver driver;
 
-  public ScreenShotGenerator(final WebDriver driver) {
+  public ScreenShotGenerator(@NotNull final WebDriver driver) {
     this.driver = driver;
   }
 
   @Override
-  public void accept(final Path path) {
+  public void accept(@NotNull final Path path) {
+    final var screenshot = ((TakesScreenshot) this.driver).getScreenshotAs(OutputType.BYTES);
     Try.call(() -> Files.createDirectories(path))
-        .andThenTry((it) -> Files.createFile(it.resolve(path)))
-        .andThenTry(
-            (it) ->
-                Files.write(it, ((TakesScreenshot) this.driver).getScreenshotAs(OutputType.BYTES)));
+        .andThenTry(it -> Files.createFile(it.resolve(path)))
+        .andThenTry(it -> Files.write(it, screenshot));
   }
 }

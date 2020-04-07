@@ -36,7 +36,7 @@ public class ScreenShotNamer implements Function<Scenario, Path> {
 
   private final Path basePath;
 
-  public ScreenShotNamer(final Path basePath) {
+  public ScreenShotNamer(@NotNull final Path basePath) {
     this.basePath = basePath;
   }
 

@@ -26,6 +26,7 @@ def VERSIONS = [
 sonarqube {
   properties {
     property "sonar.projectKey", "cucumber-confiture"
+    property "sonar.login", System.getenv("SONARQUBE_TOKEN")
     property "sonar.organization", "hiberbee"
     property "sonar.host.url", "https://sonarcloud.io/"
   }

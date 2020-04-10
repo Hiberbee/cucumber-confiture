@@ -19,7 +19,7 @@ def VERSIONS = [
   cucumberReporting   : "4.0.36",
   gradle              : "6.3",
   jetbrainsAnnotations: "19.0",
-  junit               : "5.6.1",
+  junit               : "5.6.2",
   lombok              : "1.18.12",
   springBoot          : "2.2.6.RELEASE",
 ]

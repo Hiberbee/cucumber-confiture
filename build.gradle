@@ -16,7 +16,7 @@ repositories {
 
 def VERSIONS = [
   cucumber            : "5.6.0",
-  cucumberReporting   : "4.0.36",
+  cucumberReporting   : "4.0.40",
   gradle              : "6.3",
   jetbrainsAnnotations: "19.0",
   junit               : "5.6.1",

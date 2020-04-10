@@ -1,14 +1,16 @@
 @ui
-Feature: Multi-module Gradle project
+Feature: Automate Web UI testing
 
-  Background:
-    Given Chrome web browser
+  Background: Browser is installed and configured
+    Given web browser is Chrome
     And window state is minimized
 
-  Scenario: Included build depenencies
-    Given https://google.com base url
-    When I go to '/' url
+  Scenario: Simple url navigation
+    When user is opening https://google.com url
     And title should contain Google
-    When I go to 'https://microsoft.com' url
+    When user is opening https://microsoft.com url
     Then title should contain Microsoft
     But page source should not contain Google
+    And browser history should contain
+      | https://google.com    |
+      | https://microsoft.com |

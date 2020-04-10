@@ -33,8 +33,10 @@ public class ScreenShotNamerTests {
 
   @Test
   void apply() {
-    final var namer = new ScreenShotNamer(Paths.get("/tmp"));
+    final var namer = new ScreenShotNamer();
     final var name = "fake";
-    Assertions.assertThat(namer.apply(name)).asString().startsWith("/tmp/fake");
+    Assertions.assertThat(namer.andThen(Paths.get("/tmp")::resolve).apply(name))
+        .asString()
+        .contains("/tmp/fake");
   }
 }

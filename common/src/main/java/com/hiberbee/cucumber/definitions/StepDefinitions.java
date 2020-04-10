@@ -25,14 +25,20 @@
 package com.hiberbee.cucumber.definitions;
 
 import com.hiberbee.cucumber.annotations.FeatureState;
-import com.hiberbee.cucumber.configurations.TestConfiguration;
+import com.hiberbee.cucumber.configurations.CucumberConfiguration;
+import com.hiberbee.cucumber.support.CucumberRun;
+import com.slack.api.methods.MethodsClient;
+import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.ParameterType;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
-import io.cucumber.spring.CucumberContextConfiguration;
+import lombok.extern.java.Log;
+import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.function.Try;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.Cache;
@@ -40,11 +46,9 @@ import org.springframework.cache.Cache;
 import java.net.URI;
 import java.net.URL;
 
-@SpringBootTest(
-    classes = TestConfiguration.class,
-    webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@CucumberContextConfiguration
-public class CommonDefinitions {
+@Log
+@SpringBootTest(classes = CucumberConfiguration.class)
+public class StepDefinitions {
 
   @Value("#{cacheManager.getCache('feature')}")
   private Cache featureState;
@@ -55,20 +59,38 @@ public class CommonDefinitions {
   @Value("#{cacheManager.getCache('scenario')}")
   private Cache scenarioState;
 
-  @ParameterType(value = "(.*)")
-  public URL url(final String value) throws AssertionError {
+  @Value("${cucumber.slack.icon}")
+  private String icon;
+
+  @Value("${cucumber.slack.enabled}")
+  private Boolean slackEnabled;
+
+  @Autowired private MethodsClient slackClient;
+
+  @ParameterType("(.*)")
+  public URL url(final String value) {
     return Try.call(() -> URI.create(value))
         .andThenTry(URI::toURL)
-        .toOptional()
-        .orElseThrow(
-            () -> new CucumberException(String.format("URL parameter %s is invalid", value)));
+        .getOrThrow(CucumberException::new);
   }
 
-  @Given("{url} base url")
-  @FeatureState
-  public URL baseUrl(final URL url) {
-    this.featureState.put("baseUrl", url);
+  @FeatureState("T(com.hiberbee.cucumber.definitions.StepDefinitions$State).BASE_URL")
+  @Given("base url is {url}")
+  public URL baseUrlIs(final URL url) {
     return url;
+  }
+
+  @After()
+  public void sendSlackNotifications(final @NotNull Scenario scenario) {
+    if (scenario.isFailed() && this.slackEnabled) {
+      final var message =
+          ChatPostMessageRequest.builder()
+              .iconUrl(this.icon)
+              .channel("cucumber")
+              .text(scenario.getName())
+              .build();
+      Try.call(() -> this.slackClient.chatPostMessage(message)).ifFailure(CucumberRun::fail);
+    }
   }
 
   @Before
@@ -80,5 +102,9 @@ public class CommonDefinitions {
   @After
   public void clearScenarioCache() {
     this.scenarioState.clear();
+  }
+
+  enum State {
+    BASE_URL
   }
 }

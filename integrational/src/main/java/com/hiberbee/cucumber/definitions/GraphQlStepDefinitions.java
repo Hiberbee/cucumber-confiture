@@ -22,26 +22,6 @@
  * SOFTWARE.
  */
 
-package com.hiberbee.cucumber.configurations;
+package com.hiberbee.cucumber.definitions;
 
-import com.hiberbee.cucumber.annotations.EnableCucumberState;
-import io.cucumber.junit.platform.engine.Cucumber;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.PropertySource;
-
-@Cucumber
-@EnableAutoConfiguration
-@EnableCucumberState
-@ComponentScan("com.hiberbee.cucumber")
-@PropertySource("classpath:application.yml")
-public class TestConfiguration {
-
-  @Bean
-  public CacheManager cacheManager() {
-    return new ConcurrentMapCacheManager("suite", "hook", "feature", "scenario");
-  }
-}
+public class GraphQlStepDefinitions {}

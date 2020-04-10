@@ -1,8 +1,6 @@
 language: java
 script:
-  - "./gradlew test"
-  - "./gradlew integrationalTest"
-  - "./gradlew sonarqube"
-env:
-  global:
-    secure: VByT8VdHXqH/p4Hyh39YoWkTdp4ZjybrGuOpumF1CBjAUZKhrsoxoUXYzavm82jSzS5k7/2ZnjfTEGsP4ifhJKXjC0xshwv3A7BmXbFfDPPwMKEdgImF+Gg9D9CvsHIrrIQTd0Jv4wsprYX1lVOqVsNxc0eu3bvn54G5XrbOxmmMkYO/8r+C1jp0H9ptwlzbhYXPtyfccz4QwDYf7cJjO+zEfKiaXdws6WOV+7zZLT86+iZ7MtMlLZGGPA9/Yh03oLUKHd0ygaIA7tMCRpEq+0A7qbCViP45ZU7d72wVPRYEMF+oGvXmVAuXriQg4SzMD8FzEJz/ZGyEfGvqXBKF9SoMyrHfjryNsqcFUUk89QNo8BUzNVC/v7AOc2IDKIc9ROeIQJ6YFuk0IjmSbHGdYJzGRZ10piitTJiCsJqwVNvEqvlMeng74AqZ6zs7gbqtph3b2CZx8nZO3et+qNtcbtJlDTJI/6KbdcogFT6AOrxeQGlqkHwDAMUsxichfl26HuEVKEk3Ziin0oPLusSOnc4iFOnbI19E8yNbVLcJEJJRtEl0p93A2OCzxwnLTlUKzwAyPjWyu7ZAyFGBm6FESoYSTH7n3k4z8puT/6MVDN2OTBrPTW6KP7Gg5PZbOTyx6oagCAzE2Eg/QjIVksHCnvNXtkro2zP7wV3AkoBGrIc=
+  - ./gradlew test
+  - ./gradlew integrationalTest
+  - ./gradlew sonarqube
+  - ./gradlew build publishToMavenLocal

@@ -22,20 +22,17 @@
  * SOFTWARE.
  */
 
-package com.hiberbee.cucumber.annotations;
+package com.hiberbee.cucumber.support;
 
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.AdviceMode;
+import lombok.extern.java.Log;
+import org.assertj.core.api.Assertions;
+import org.jetbrains.annotations.NotNull;
 
-import java.lang.annotation.*;
+@Log
+public class CucumberRun {
 
-@Documented
-@Inherited
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@EnableCaching(mode = AdviceMode.PROXY)
-@CacheConfig(
-    keyGenerator = "methodNameGenerator",
-    cacheNames = {"suite", "hook", "feature", "scenario"})
-public @interface EnableCucumberState {}
+  public static void fail(final @NotNull Throwable throwable) {
+    log.fine(throwable.getMessage());
+    Assertions.fail(throwable.getMessage(), throwable);
+  }
+}

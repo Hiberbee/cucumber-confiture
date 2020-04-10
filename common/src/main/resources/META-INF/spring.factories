@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.hiberbee.cucumber.configurations.TestConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.hiberbee.cucumber.configurations.CucumberConfiguration

@@ -26,23 +26,15 @@ package com.hiberbee.cucumber.functions;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Function;
 
-public class ScreenShotNamer implements Function<String, Path> {
-
-  private final Path basePath;
-
-  public ScreenShotNamer(@NotNull final Path basePath) {
-    this.basePath = basePath;
-  }
+public class ScreenShotNamer implements Function<String, String> {
 
   @Override
-  public Path apply(@NotNull final String name) {
-    return this.basePath.resolve(
-        String.format(
-            "%s-%s.png", name, DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(OffsetDateTime.now())));
+  public String apply(@NotNull final String name) {
+    return String.format(
+        "%s-%s.png", name, DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(OffsetDateTime.now()));
   }
 }

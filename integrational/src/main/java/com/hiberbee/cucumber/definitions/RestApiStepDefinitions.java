@@ -26,8 +26,7 @@ package com.hiberbee.cucumber.definitions;
 
 import com.hiberbee.cucumber.annotations.ScenarioState;
 import io.cucumber.java.ParameterType;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+import io.cucumber.java.en.And;
 import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.function.Try;
@@ -36,19 +35,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URL;
 import java.util.List;
 
+import static com.hiberbee.cucumber.definitions.StepDefinitions.State.BASE_URL;
+
 public class RestApiStepDefinitions {
 
   @Value("#{cacheManager.getCache('feature')}")
-  private Cache feature;
+  private Cache featureState;
 
   @Value("#{cacheManager.getCache('scenario')}")
-  private Cache scenario;
+  private Cache scenarioState;
 
   @Autowired private RestTemplate restTemplate;
 
@@ -62,32 +64,42 @@ public class RestApiStepDefinitions {
     return HttpStatus.resolve(Integer.parseInt(httpStatus));
   }
 
-  @ScenarioState
-  @When("I make {httpMethod} request")
-  public void makeRequest(final HttpMethod httpMethod) {
-    final var response =
-        Try.call(() -> this.feature.get("baseUrl", URL.class))
-            .andThenTry(URL::toURI)
-            .andThenTry(
-                uri ->
-                    this.restTemplate.getRequestFactory().createRequest(uri, httpMethod).execute())
-            .toOptional()
-            .orElseThrow();
-    this.scenario.put("response", response);
+  @ScenarioState("T(com.hiberbee.cucumber.definitions.RestApiStepDefinitions$State).REQUEST")
+  @And("HTTP request method is {httpMethod}")
+  public ClientHttpRequest httpRequestMethodIs(final HttpMethod httpMethod) {
+    return Try.success(this.featureState.get(BASE_URL, URL.class))
+        .andThenTry(URL::toURI)
+        .andThenTry(uri -> this.restTemplate.getRequestFactory().createRequest(uri, httpMethod))
+        .toOptional()
+        .orElseThrow();
   }
 
-  @Then("response status code is {httpStatus}")
+  @ScenarioState("T(com.hiberbee.cucumber.definitions.RestApiStepDefinitions$State).RESPONSE")
+  @And("request is executed")
+  public ClientHttpResponse requestIsExecuted() {
+    return Try.success(this.scenarioState.get(State.REQUEST, ClientHttpRequest.class))
+        .andThenTry(ClientHttpRequest::execute)
+        .toOptional()
+        .orElseThrow();
+  }
+
+  @And("HTTP response status code is {httpStatus}")
   public void responseStatusCodeIs(final @NotNull HttpStatus httpStatus) {
-    Try.success(this.scenario.get("response", ClientHttpResponse.class))
+    Try.success(this.scenarioState.get(State.RESPONSE, ClientHttpResponse.class))
         .andThenTry(ClientHttpResponse::getRawStatusCode)
         .andThenTry(Assertions.assertThat(httpStatus.value())::isEqualTo)
         .ifFailure(e -> Assertions.fail(e.getMessage()));
   }
 
-  @Then("^(Accept|Content-Type) header is(?:(|not)) (.+)$")
+  @And("^(Accept|Content-Type) header is(?:(|not)) (.+)$")
   public void responseHeaderIs(final String key, final String not, final String value) {
-    Try.success(this.scenario.get("response", ClientHttpResponse.class))
+    Try.success(this.scenarioState.get(State.RESPONSE, ClientHttpResponse.class))
         .andThenTry(ClientHttpResponse::getHeaders)
         .andThenTry(headers -> Assertions.assertThat(headers).containsEntry(key, List.of(value)));
+  }
+
+  enum State {
+    REQUEST,
+    RESPONSE
   }
 }

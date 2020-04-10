@@ -26,13 +26,16 @@ package com.hiberbee.cucumber.definitions;
 
 import com.hiberbee.cucumber.functions.ScreenShotGenerator;
 import com.hiberbee.cucumber.functions.ScreenShotNamer;
+import com.hiberbee.cucumber.support.CucumberRun;
 import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.github.bonigarcia.wdm.DriverManagerType;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import lombok.extern.java.Log;
 import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.function.Try;
@@ -43,18 +46,37 @@ import org.openqa.selenium.devtools.browser.model.WindowState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
+@Log
 public class SeleniumStepDefinitions {
 
   private WebDriver driver;
 
   @Value("#{cacheManager.getCache('feature')}")
   private Cache featureState;
+
+  private @NotNull Consumer<String> addToHistory() {
+    return Objects.requireNonNull(this.featureState.get(State.HISTORY, ArrayList<String>::new))
+        ::add;
+  }
+
+  private void makeScreenShot(final String name) {
+    new ScreenShotGenerator()
+        .accept(
+            new ScreenShotNamer()
+                .andThen(Paths.get("build/reports/screenshots")::resolve)
+                .apply(String.valueOf(name).replace("\"", "")),
+            this.driver);
+  }
 
   @ParameterType(value = "(Chrome|Edge|Opera|Firefox)")
   public DriverManagerType browser(@NotNull final String value) {
@@ -84,29 +106,32 @@ public class SeleniumStepDefinitions {
     }
   }
 
-  @Given("I go to {string} url")
-  public void iCanOpenWebPageWithWebDriver(@NotNull final String uri) {
-    Try.call(Objects.requireNonNull(this.featureState.get("baseUrl", URL.class))::toURI)
-        .andThenTry(url -> url.resolve(uri).toString())
-        .ifSuccess(url -> this.driver.get(url))
-        .ifFailure(i -> this.driver.get(uri));
+  @Given("user is opening {url} url")
+  public void isOpeningUrl(@NotNull final URL url) {
+    Try.call(url::toURI)
+        .andThenTry(URI::toString)
+        .ifSuccess(this.driver::get)
+        .ifSuccess(this.addToHistory())
+        .ifFailure(CucumberRun::fail);
+  }
+
+  @Before("@ui")
+  public void initBrowserHistory() {
+    this.featureState.putIfAbsent(State.HISTORY, new ArrayList<String>());
   }
 
   @After("@ui")
   public void quitWebDriver(final Scenario scenario) {
     if (this.driver != null) {
-      if (scenario.isFailed())
-        new ScreenShotGenerator(this.driver)
-            .accept(
-                new ScreenShotNamer(Paths.get("build/reports/screenshots"))
-                    .apply(scenario.getName().replace("\"", "")));
-
+      if (scenario.isFailed()) {
+        this.makeScreenShot(scenario.getName());
+      }
       this.driver.quit();
     }
   }
 
-  @Given("{browser} web browser")
-  public void webBrowser(@NotNull final DriverManagerType browser) {
+  @Given("web browser is {browser}")
+  public void webBrowserIs(@NotNull final DriverManagerType browser) {
     WebDriverManager.getInstance(browser).setup();
     @SuppressWarnings("unchecked")
     final var maybeDriver =
@@ -115,6 +140,12 @@ public class SeleniumStepDefinitions {
                 .andThenTry(ReflectionUtils::newInstance)
                 .toOptional();
     this.driver = maybeDriver.orElseGet(ChromeDriver::new);
+  }
+
+  @And("browser history should contain")
+  public void browserHistoryShouldContain(final List<String> urls) {
+    final var history = this.featureState.get(State.HISTORY, ArrayList<String>::new);
+    Assertions.assertThat(history).containsAll(urls);
   }
 
   @And("^(page source|title) should(?:(| not)) contain (.+)$")
@@ -128,5 +159,9 @@ public class SeleniumStepDefinitions {
     Assertions.assertThat(this.driver)
         .extracting(extractingFunction)
         .matches(actual -> not.isBlank() == actual.contains(expected));
+  }
+
+  enum State {
+    HISTORY
   }
 }

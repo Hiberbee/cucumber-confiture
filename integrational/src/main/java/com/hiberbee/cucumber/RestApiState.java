@@ -22,28 +22,15 @@
  * SOFTWARE.
  */
 
-package com.hiberbee.cucumber.functions;
+package com.hiberbee.cucumber;
 
-import com.hiberbee.cucumber.support.CucumberRun;
-import org.jetbrains.annotations.NotNull;
-import org.junit.platform.commons.function.Try;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
+import lombok.AllArgsConstructor;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.function.BiConsumer;
+import java.net.URL;
 
-public class ScreenShotGenerator implements BiConsumer<Path, WebDriver> {
+@AllArgsConstructor
+public enum RestApiState {
+  BASE_URL(URL.class);
 
-  @Override
-  public void accept(@NotNull final Path path, @NotNull final WebDriver driver) {
-    final var screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-    Try.success(path)
-        .andThenTry(Files::createDirectories)
-        .andThenTry(it -> Files.createFile(it.resolve(path)))
-        .andThenTry(it -> Files.write(it, screenshot))
-        .ifFailure(CucumberRun::fail);
-  }
+  public final Class<?> type;
 }

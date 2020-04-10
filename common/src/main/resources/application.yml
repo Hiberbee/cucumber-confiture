@@ -4,3 +4,9 @@ logging:
 spring:
   main:
     banner-mode: 'off'
+cucumber:
+  slack:
+    enabled: false
+    icon: https://bit.ly/2wtAjlF
+    token: ~
+    channel: cucumber

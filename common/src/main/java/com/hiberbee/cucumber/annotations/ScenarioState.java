@@ -1,6 +1,9 @@
 package com.hiberbee.cucumber.annotations;
 
+import org.intellij.lang.annotations.Language;
+import org.intellij.lang.annotations.MagicConstant;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;
 
@@ -8,5 +11,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Cacheable(value = "scenario", keyGenerator = "methodNameGenerator")
-public @interface ScenarioState {}
+@Cacheable("scenario")
+public @interface ScenarioState {
+
+  @AliasFor(annotation = Cacheable.class, attribute = "key")
+  @MagicConstant
+  @Language("SpEL")
+  String value();
+}

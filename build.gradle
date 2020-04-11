@@ -48,7 +48,10 @@ idea {
       }
     }
     module {
-      setExcludeDirs(files("gradle", "build").toSet())
+      inheritOutputDirs = true
+      downloadJavadoc = true
+      downloadSources = true
+      excludeDirs += files("gradle", ".gradle", "build")
     }
   }
 }

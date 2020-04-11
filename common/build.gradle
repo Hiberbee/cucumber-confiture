@@ -1,0 +1,45 @@
+plugins {
+  id("java-library")
+}
+
+description "Common step definition collection with feature state management and Spring Boot auto configuration"
+
+repositories {
+  jcenter()
+}
+
+def VERSIONS = [
+  assertj             : "3.15.0",
+  cucumberReport      : "4.0.40",
+  gradle              : "6.3",
+  jetbrainsAnnotations: "19.0.0",
+  lombok              : "1.18.12",
+  mockito             : "3.3.3",
+  slack               : "1.0.3",
+  yaml                : "1.26"
+]
+
+dependencies {
+  annotationProcessor("org.projectlombok:lombok:$VERSIONS.lombok")
+
+  api("io.cucumber:cucumber-core")
+  api("io.cucumber:cucumber-java")
+  api("io.cucumber:cucumber-spring")
+  api("org.assertj:assertj-core:$VERSIONS.assertj")
+  api("org.jetbrains:annotations:$VERSIONS.jetbrainsAnnotations")
+  api("org.junit.jupiter:junit-jupiter-api")
+  api("org.junit.jupiter:junit-jupiter-engine")
+  api("org.mockito:mockito-core:$VERSIONS.mockito")
+  api("org.springframework.boot:spring-boot-starter-cache")
+
+  implementation("com.slack.api:slack-api-client:$VERSIONS.slack")
+  implementation("org.springframework.boot:spring-boot-starter-test")
+  implementation("io.cucumber:cucumber-junit-platform-engine")
+  implementation("org.yaml:snakeyaml") {
+    version {
+      strictly VERSIONS.yaml
+    }
+    because "https://app.snyk.io/vuln/SNYK-JAVA-ORGYAML-537645"
+  }
+  implementation("org.springframework.boot:spring-boot-configuration-processor")
+}

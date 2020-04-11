@@ -1,0 +1,23 @@
+{
+  "properties": [
+    {
+      "name": "cucumber.slack.token",
+      "type": "java.lang.String",
+      "default": ""
+    },
+    {
+      "name": "cucumber.slack.channel",
+      "type": "java.lang.String",
+      "default": "cucumber"
+    },
+    {
+      "name": "cucumber.slack.enabled",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "name": "cucumber.slack.icon",
+      "type": "java.lang.String",
+      "default": ""
+    }
+  ]
+}

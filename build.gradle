@@ -111,7 +111,7 @@ allprojects {
     dependsOn(tasks.named("processResources"))
   }
 
-  tasks.withType(PublishToMavenLocal).configureEach {
+  tasks.withType(PublishToMavenRepository).configureEach {
     repositories {
       maven {
         name "GitHubPackages"
@@ -154,6 +154,7 @@ allprojects {
 
   repositories {
     jcenter()
+    mavenLocal()
   }
 
   configurations {
@@ -167,7 +168,7 @@ allprojects {
     implementation platform("io.cucumber:cucumber-core:$VERSIONS.cucumber")
     implementation platform("org.springframework.boot:spring-boot-dependencies:$VERSIONS.springBoot")
 
-    testImplementation "de.monochromata.cucumber:reporting-plugin:$VERSIONS.cucumberReporting"
+    testImplementation("de.monochromata.cucumber:reporting-plugin:$VERSIONS.cucumberReporting")
     testImplementation("io.cucumber:cucumber-junit-platform-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-engine")

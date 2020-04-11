@@ -1,4 +1,4 @@
-Feature: Docker client
+Ability: Automate test
 
   Scenario: Docker connection
     Given I have docker executable in $PATH path

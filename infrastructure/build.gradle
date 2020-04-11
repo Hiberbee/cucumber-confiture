@@ -7,16 +7,18 @@ repositories {
 }
 
 def VERSIONS = [
-  kubernetesClient: "4.9.0",
-  dockerClient    : "3.2.1",
-  lombok          : "1.18.12"
+  kubernetesClient    : "4.9.0",
+  dockerClient        : "3.2.1",
+  kubernetesAssertions: "4.0.0",
+  lombok              : "1.18.12"
 ]
 
 dependencies {
-  implementation("com.hiberbee:cucumber-common:$project.version")
+  implementation("${project.group}:cucumber-common:${project.version}")
 
   annotationProcessor("org.projectlombok:lombok:$VERSIONS.lombok")
 
   implementation("com.github.docker-java:docker-java:$VERSIONS.dockerClient")
   implementation("io.fabric8:kubernetes-client:$VERSIONS.kubernetesClient")
+  implementation("io.fabric8:kubernetes-assertions:$VERSIONS.kubernetesAssertions")
 }

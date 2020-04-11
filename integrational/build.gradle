@@ -7,12 +7,14 @@ repositories {
 }
 
 def VERSIONS = [
-  lombok: "1.18.12"
+  hiberbeeCucumber: "1.0.0-SNAPSHOT",
+  lombok          : "1.18.12",
+  guava           : "28.2-jre"
 ]
 
 dependencies {
-  implementation("${project.group}:cucumber-common:${project.version}")
-
+  implementation("${project.group}:cucumber-common:$VERSIONS.hiberbeeCucumber")
+  implementation("com.google.guava:guava:$VERSIONS.guava")
   annotationProcessor("org.projectlombok:lombok:$VERSIONS.lombok")
   implementation("org.springframework.boot:spring-boot-starter-web")
 }

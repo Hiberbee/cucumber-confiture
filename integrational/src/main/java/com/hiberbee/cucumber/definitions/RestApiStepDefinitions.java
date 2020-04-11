@@ -25,8 +25,9 @@
 package com.hiberbee.cucumber.definitions;
 
 import com.hiberbee.cucumber.annotations.ScenarioState;
-import io.cucumber.java.ParameterType;
+import com.hiberbee.cucumber.support.CucumberRun;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.When;
 import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.function.Try;
@@ -34,13 +35,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
+import java.util.Objects;
 
 import static com.hiberbee.cucumber.definitions.StepDefinitions.State.BASE_URL;
 
@@ -54,28 +55,22 @@ public class RestApiStepDefinitions {
 
   @Autowired private RestTemplate restTemplate;
 
-  @ParameterType("(GET|POST|PUT|PATCH|TRACE|DELETE|OPTIONS|HEAD)")
-  public HttpMethod httpMethod(final String httpMethod) {
-    return HttpMethod.resolve(httpMethod);
-  }
-
-  @ParameterType("(.+)")
-  public HttpStatus httpStatus(final String httpStatus) {
-    return HttpStatus.resolve(Integer.parseInt(httpStatus));
-  }
-
   @ScenarioState("T(com.hiberbee.cucumber.definitions.RestApiStepDefinitions$State).REQUEST")
-  @And("HTTP request method is {httpMethod}")
-  public ClientHttpRequest httpRequestMethodIs(final HttpMethod httpMethod) {
+  @And("^HTTP request method is (GET|POST|PUT|PATCH|TRACE|DELETE|OPTIONS|HEAD)$")
+  public ClientHttpRequest httpRequestMethodIs(final String httpMethod) {
     return Try.success(this.featureState.get(BASE_URL, URL.class))
         .andThenTry(URL::toURI)
-        .andThenTry(uri -> this.restTemplate.getRequestFactory().createRequest(uri, httpMethod))
+        .andThenTry(
+            it ->
+                this.restTemplate
+                    .getRequestFactory()
+                    .createRequest(it, Objects.requireNonNull(HttpMethod.resolve(httpMethod))))
         .toOptional()
         .orElseThrow();
   }
 
   @ScenarioState("T(com.hiberbee.cucumber.definitions.RestApiStepDefinitions$State).RESPONSE")
-  @And("request is executed")
+  @When("request is executed")
   public ClientHttpResponse requestIsExecuted() {
     return Try.success(this.scenarioState.get(State.REQUEST, ClientHttpRequest.class))
         .andThenTry(ClientHttpRequest::execute)
@@ -83,19 +78,39 @@ public class RestApiStepDefinitions {
         .orElseThrow();
   }
 
-  @And("HTTP response status code is {httpStatus}")
-  public void responseStatusCodeIs(final @NotNull HttpStatus httpStatus) {
+  @And("HTTP response status code is {int}")
+  public void responseStatusCodeIs(final @NotNull Integer httpStatus) {
     Try.success(this.scenarioState.get(State.RESPONSE, ClientHttpResponse.class))
         .andThenTry(ClientHttpResponse::getRawStatusCode)
-        .andThenTry(Assertions.assertThat(httpStatus.value())::isEqualTo)
-        .ifFailure(e -> Assertions.fail(e.getMessage()));
+        .andThenTry(Assertions.assertThat(httpStatus)::isEqualTo)
+        .ifFailure(CucumberRun::fail);
   }
 
-  @And("^(Accept|Content-Type) header is(?:(|not)) (.+)$")
-  public void responseHeaderIs(final String key, final String not, final String value) {
+  @And(
+      "^HTTP request (Accept|AccessControlRequestMethod|Authorization|CacheControl|Connection|ContentEncoding|ContentLength|Cookie|ContentType|Date|Expect|Forwarded|From|Host|Origin|Pragma|ProxyAuthorization|Range|Referer|TransferEncoding|UserAgent) header is (.+)$")
+  public void requestHeaderIs(final String headerName, final String expectedValue) {
+    Try.success(this.scenarioState.get(State.REQUEST, ClientHttpRequest.class))
+        .andThenTry(ClientHttpRequest::getHeaders);
+  }
+
+  @And("HTTP response body contains {string}")
+  public void responseBodyContains(final String expected) {
+    Try.success(this.scenarioState.get(State.RESPONSE, ClientHttpResponse.class))
+        .andThenTry(ClientHttpResponse::getBody)
+        .andThenTry(InputStream::readAllBytes)
+        .andThenTry(String::new)
+        .ifSuccess(it -> Assertions.assertThat(it).contains(expected))
+        .ifFailure(CucumberRun::fail);
+  }
+
+  @And(
+      "^HTTP response (CacheControl|ContentType|ETag|Expires|LastModified|Link|Location|Pragma|SetCookie|Vary) header is (.+)$")
+  public void responseHeaderIs(final String headerName, final String expectedValue) {
     Try.success(this.scenarioState.get(State.RESPONSE, ClientHttpResponse.class))
         .andThenTry(ClientHttpResponse::getHeaders)
-        .andThenTry(headers -> Assertions.assertThat(headers).containsEntry(key, List.of(value)));
+        .andThenTry(
+            headers -> Assertions.assertThat(headers.get(headerName)).contains(expectedValue))
+        .ifFailure(CucumberRun::fail);
   }
 
   enum State {

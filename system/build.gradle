@@ -7,5 +7,5 @@ repositories {
 }
 
 dependencies {
-  implementation("com.hiberbee.cucumber:common:$project.version")
+  implementation("${project.group}:cucumber-common:${project.version}")
 }

@@ -13,7 +13,7 @@ def VERSIONS = [
 ]
 
 dependencies {
-  implementation("com.hiberbee.cucumber:common:$project.version")
+  implementation("com.hiberbee:cucumber-common:$project.version")
 
   annotationProcessor("org.projectlombok:lombok:$VERSIONS.lombok")
 

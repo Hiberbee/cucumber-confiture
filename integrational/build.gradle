@@ -11,7 +11,7 @@ def VERSIONS = [
 ]
 
 dependencies {
-  implementation("com.hiberbee.cucumber:common:$project.version")
+  implementation("${project.group}:cucumber-common:${project.version}")
 
   annotationProcessor("org.projectlombok:lombok:$VERSIONS.lombok")
   implementation("org.springframework.boot:spring-boot-starter-web")

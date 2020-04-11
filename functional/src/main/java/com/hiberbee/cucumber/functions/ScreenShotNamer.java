@@ -28,9 +28,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
-public class ScreenShotNamer implements Function<String, String> {
+public class ScreenShotNamer implements UnaryOperator<String> {
 
   @Override
   public String apply(@NotNull final String name) {

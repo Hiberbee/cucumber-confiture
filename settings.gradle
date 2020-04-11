@@ -5,13 +5,11 @@ pluginManagement {
 }
 buildCache {
   local {
-    enabled = true
-    directory = file("${rootProject.projectDir.absolutePath}/.gradle/cache")
+    setEnabled(true)
+    setDirectory(file("${rootProject.projectDir.absolutePath}/.gradle/cache"))
   }
 }
 
 rootProject.name = "cucumber-confiture"
 
-includeBuild("common")
 include("functional", "system", "infrastructure", "integrational")
-

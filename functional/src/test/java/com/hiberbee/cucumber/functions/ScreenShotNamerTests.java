@@ -32,7 +32,7 @@ import java.nio.file.Paths;
 public class ScreenShotNamerTests {
 
   @Test
-  void apply() {
+  void testNameGenerator() {
     final var namer = new ScreenShotNamer();
     final var name = "fake";
     Assertions.assertThat(namer.andThen(Paths.get("/tmp")::resolve).apply(name))

@@ -1,4 +1,4 @@
-Ability: Automate test
+Ability: Automate Docker containers testing with Cucumber
 
   Scenario: Docker connection
     Given I have docker executable in $PATH path

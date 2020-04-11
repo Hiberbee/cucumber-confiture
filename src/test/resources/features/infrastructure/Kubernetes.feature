@@ -1,5 +1,4 @@
-@slack
-Feature: Kubernetes client
+Feature: Automate Kubernets cluster testing with Cucumber
 
   Scenario: Kubernetes connection
     Given I have kubectl executable in $PATH path

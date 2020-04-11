@@ -1,7 +1,5 @@
-build
-.idea
 .env
+.gradle
+.idea
+build
 gradle/
-gradlew
-gradlew.bat
-src/test/resources/

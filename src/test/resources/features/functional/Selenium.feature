@@ -1,5 +1,5 @@
 @ui
-Feature: Automate Web UI testing
+Feature: Automate Web UI testing with Cucumber
 
   Background: Browser is installed and configured
     Given web browser is Chrome

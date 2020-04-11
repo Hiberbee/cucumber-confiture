@@ -3,17 +3,14 @@ plugins {
   id("com.github.ben-manes.versions") version "0.28.0"
   id("idea")
   id("jacoco")
-  id("org.sonarqube") version "2.8"
+  id("maven-publish")
+  id("org.sonarqube") version "2.8" apply false
   id("org.jetbrains.gradle.plugin.idea-ext") version "0.7"
 }
 
-group "com.hiberbee"
+group "com.hiberbee.cucumber"
 description "Monorepo entrypoint for Cucumber test packages"
 version "1.0.0-SNAPSHOT"
-
-repositories {
-  mavenCentral()
-}
 
 def VERSIONS = [
   cucumber            : "5.6.0",
@@ -24,15 +21,6 @@ def VERSIONS = [
   lombok              : "1.18.12",
   springBoot          : "2.2.6.RELEASE",
 ]
-
-sonarqube {
-  properties {
-    property "sonar.projectKey", "cucumber-confiture"
-    property "sonar.organization", "hiberbee"
-    property "sonar.host.url", "https://sonarcloud.io"
-    property "sonar.login", System.getenv("SONARQUBE_TOKEN")
-  }
-}
 
 idea {
   project {
@@ -46,20 +34,17 @@ idea {
         }
       }
     }
-    module {
-      inheritOutputDirs = true
-      downloadJavadoc = true
-      downloadSources = true
-      excludeDirs += files("gradle", ".gradle", "build")
-    }
   }
 }
 
+repositories {
+  mavenCentral()
+}
 
 class CucumberFeature extends JavaExec {
 
   CucumberFeature() {
-    super.setGroup("features")
+    super.setGroup("verification")
     super.dependsOn(project.tasks.getByName("testClasses"))
     super.outputs.dir("build/reports")
     super.setMain("org.junit.platform.console.ConsoleLauncher")
@@ -75,19 +60,6 @@ class CucumberFeature extends JavaExec {
   }
 }
 
-tasks.register("functionalTest", CucumberFeature) {
-  args += ["--include-tag", "ui", "--select-package", "features.functional"]
-}
-tasks.register("integrationalTest", CucumberFeature) {
-  args += ["--select-package", "features.integrational"]
-}
-tasks.register("infrastructureTest", CucumberFeature) {
-  args += ["--select-package", "features.infrastructure"]
-}
-tasks.register("systemTest", CucumberFeature) {
-  args += ["--select-package", "features.system"]
-}
-
 allprojects {
   group = rootProject.group
   version = rootProject.version
@@ -97,11 +69,21 @@ allprojects {
   apply plugin: "jacoco"
   apply plugin: "java-library"
 
-  tasks.withType(GenerateIdeaModule).configureEach {
-    module.setExcludeDirs(files("gradle", "build").toSet())
-    module.setInheritOutputDirs(true)
-    module.setDownloadJavadoc(false)
-    module.setDownloadSources(true)
+  wrapper {
+    distributionType = Wrapper.DistributionType.ALL
+    gradleVersion = VERSIONS.gradle
+  }
+
+  idea {
+    module {
+      downloadJavadoc = false
+      downloadSources = true
+      excludeDirs += files("gradle", ".gradle", "build")
+    }
+  }
+
+  jacoco {
+    toolVersion "0.8.5"
   }
 
   tasks.withType(JavaCompile).configureEach {
@@ -110,11 +92,6 @@ allprojects {
     it.options.setFork(true)
     it.options.setIncremental(true)
     dependsOn(tasks.named("processResources"))
-  }
-
-  tasks.withType(Wrapper).configureEach {
-    distributionType(Wrapper.DistributionType.ALL)
-    gradleVersion(VERSIONS.gradle.toString())
   }
 
   tasks.withType(Test).configureEach {
@@ -140,10 +117,6 @@ allprojects {
     }
   }
 
-  repositories {
-    jcenter()
-  }
-
   configurations {
     compileOnly {
       extendsFrom(annotationProcessor)
@@ -165,9 +138,43 @@ allprojects {
   }
 }
 
-dependencies {
-  implementation(project(":functional"))
-  implementation(project(":integrational"))
-  implementation(project(":infrastructure"))
-  implementation(project(":system"))
+subprojects {
+
+  repositories {
+    mavenLocal()
+  }
+
+  apply plugin: "org.sonarqube"
+  apply plugin: "maven-publish"
+
+  sonarqube {
+    properties {
+      property "sonar.projectKey", name
+      property "sonar.organization", "hiberbee"
+      property "sonar.host.url", "https://sonarcloud.io"
+      property "sonar.login", System.getenv("SONARQUBE_TOKEN")
+    }
+  }
+
+  tasks.register("features", CucumberFeature) {
+    args += ["--select-package", "features"]
+  }
+
+  publishing {
+    repositories {
+      maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/hiberbee/cucumber-confiture")
+        credentials {
+          username = System.getenv("GITHUB_USERNAME")
+          password = System.getenv("GITHUB_TOKEN")
+        }
+      }
+    }
+    publications {
+      gpr(MavenPublication) {
+        from(components.java)
+      }
+    }
+  }
 }

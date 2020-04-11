@@ -1,7 +1,7 @@
 Ability: Automate RESTful APIs testing with Cucumber
 
   Scenario: Test HTTP GET request
-    Given base url is https://google.com
+    Given base url is http://google.com
     And HTTP request method is GET
     And HTTP request ContentType header is text/html; charset=ISO-8859-1
     When request is executed

@@ -14,7 +14,8 @@ repositories {
 }
 
 dependencies {
-  implementation("${project.group}:cucumber-common:$VERSIONS.hiberbeeCucumber")
+  implementation(project(":common"))
+
   annotationProcessor("org.projectlombok:lombok:$VERSIONS.lombok")
 
   implementation("org.seleniumhq.selenium:selenium-support:$VERSIONS.webdriver")

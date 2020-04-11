@@ -7,14 +7,14 @@ repositories {
 }
 
 def VERSIONS = [
-  kubernetesClient    : "4.9.0",
   dockerClient        : "3.2.1",
   kubernetesAssertions: "4.0.0",
+  kubernetesClient    : "4.9.0",
   lombok              : "1.18.12"
 ]
 
 dependencies {
-  implementation("${project.group}:cucumber-common:${project.version}")
+  implementation(project(":common"))
 
   annotationProcessor("org.projectlombok:lombok:$VERSIONS.lombok")
 

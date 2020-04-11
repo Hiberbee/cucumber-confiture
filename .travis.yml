@@ -1,9 +1,8 @@
 language: java
 script:
   - ./gradlew test
-  - ./gradlew integrationalTest
-  - ./gradlew systemTest
   - ./gradlew sonarqube
+  - ./gradlew publish
 env:
   global:
     - secure: kf01mJkYaiWOBVbxoQheLypQDwekDs+u4JosfM+IfVdzrr5jRaeF0FrT9iMGp1GZAVHQ4tgAnKZaLfy2c6oI5Bc21VkoS9CcWj9k/jSjICS9rib78SjJnSXRLNtxYff72fVJwPlEYd5Ct0LioAUGlT3VySzBLUTKcdr63vPYkKdFYgpuInvQiYuR91t++5AVe7ejcvCbe5H/lpoKOLpTh0tu8LW0d7+ffsA51iRAVsbAUfc3x3CVXhnG9VrOQMW1uQpCvC7vU5IzfL9X1W1ItmUaWGOSN8yT09/YfVMhoyTdAvfXuW8uujTM7lZXmtWUqR53NMcu1u91nCDhpQpBY2uNJS7g9Tx/3GPzegfmDycebXWw6d3zbCsL1IAFVivs/QNdEuejcqqricjdE/rehD0Dyqh2P05VzfdHAntmi1gAYYpjTVYRDrlVnpHVzniFLV6SOsJF3Yz1WFk9GzJWZTvrhYHueBjqvmUz1Fx6L9w3KpmdP/b3zdE9uqXrRTJIIzA32qI3j3zTHWQPrRiM/F+Phpp8fzHHfClcHu1+7Tv7FRcHKkVycVQWD/EklENF38hbXjqCpkwObt5XHTSmlLKx93imap9TecEol2gGhdl4tR4AB3JrOFogf4HTp/pzkq46AoigujAL881lm0+haG0tEFn193DECxXiQtL2/2M=

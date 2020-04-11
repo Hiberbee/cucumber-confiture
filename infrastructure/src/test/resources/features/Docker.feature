@@ -1,6 +1,6 @@
 Ability: Automate Docker containers testing with Cucumber
 
   Scenario: Docker connection
-    Given I have docker executable in $PATH path
-    And version of 'docker' is '19.03.8'
+    Given docker executable is in $PATH path
+    And docker version is "19.03"
 

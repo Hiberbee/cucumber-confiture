@@ -4,6 +4,7 @@ plugins {
 
 repositories {
   jcenter()
+  mavenLocal()
 }
 
 def VERSIONS = [
@@ -13,7 +14,8 @@ def VERSIONS = [
 ]
 
 dependencies {
-  implementation("${project.group}:cucumber-common:$VERSIONS.hiberbeeCucumber")
+  implementation(project(":common"))
+
   implementation("com.google.guava:guava:$VERSIONS.guava")
   annotationProcessor("org.projectlombok:lombok:$VERSIONS.lombok")
   implementation("org.springframework.boot:spring-boot-starter-web")

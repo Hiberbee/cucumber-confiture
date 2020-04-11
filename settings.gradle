@@ -11,7 +11,5 @@ buildCache {
 }
 
 rootProject.name = "cucumber-confiture"
-includeBuild("../cucumber-template")
 includeBuild("../cucumber-common")
-includeBuild("../cucumber-kubernetes")
 include("functional", "system", "infrastructure", "integrational")

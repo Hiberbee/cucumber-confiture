@@ -4,7 +4,7 @@ plugins {
   id("idea")
   id("jacoco")
   id("maven-publish")
-  id("org.sonarqube") version "2.8" apply false
+  id("org.sonarqube") version "2.8"
   id("org.jetbrains.gradle.plugin.idea-ext") version "0.7"
 }
 
@@ -39,6 +39,26 @@ idea {
 
 repositories {
   mavenCentral()
+}
+
+def allTestCoverageFile = "${rootProject.buildDir}/jacoco/allTestCoverage.exec"
+tasks.create("jacocoMerge", JacocoMerge) {
+  group = "verification"
+  destinationFile = file(allTestCoverageFile)
+  executionData = project.fileTree(dir: '.', include: '**/build/jacoco/test.exec')
+}
+
+jacoco {
+  toolVersion = "0.8.5"
+}
+
+sonarqube {
+  properties {
+    property "sonar.scm.provider", "git"
+    property "sonar.organization", "hiberbee"
+    property "sonar.host.url", "https://sonarcloud.io"
+    property "sonar.login", System.getenv("SONARQUBE_TOKEN")
+  }
 }
 
 class CucumberFeature extends JavaExec {
@@ -103,7 +123,7 @@ allprojects {
       enabled = true
       dumpOnExit = true
     }
-    finalizedBy(tasks.named("jacocoTestReport"))
+    finalizedBy(jacocoMerge)
   }
 
   tasks.withType(JacocoCoverageVerification).configureEach {
@@ -114,6 +134,8 @@ allprojects {
     enabled = true
     reports {
       xml.enabled = true
+      html.enabled true
+      csv.enabled false
     }
   }
 
@@ -136,6 +158,13 @@ allprojects {
     testRuntimeOnly("org.junit.platform:junit-platform-runner")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
   }
+
+  sonarqube {
+    properties {
+      property "sonar.projectKey", project.name
+    }
+  }
+
 }
 
 subprojects {
@@ -147,17 +176,13 @@ subprojects {
   apply plugin: "org.sonarqube"
   apply plugin: "maven-publish"
 
-  sonarqube {
-    properties {
-      property "sonar.projectKey", name
-      property "sonar.organization", "hiberbee"
-      property "sonar.host.url", "https://sonarcloud.io"
-      property "sonar.login", System.getenv("SONARQUBE_TOKEN")
-    }
-  }
 
   tasks.register("features", CucumberFeature) {
     args += ["--select-package", "features"]
+  }
+
+  test {
+    dependsOn(tasks.getByName("features"))
   }
 
   publishing {

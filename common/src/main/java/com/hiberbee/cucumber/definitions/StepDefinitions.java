@@ -115,14 +115,14 @@ public class StepDefinitions {
     final Predicate<Path> condition;
     switch (type) {
       case "directory":
-        condition = Files::isDirectory;
+        condition = Files::isRegularFile;
         break;
       case "executable":
         condition = Files::isExecutable;
         break;
       case "file":
       default:
-        condition = Files::isRegularFile;
+        condition = Files::isDirectory;
         break;
     }
 

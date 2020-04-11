@@ -23,7 +23,7 @@
     <option name="GLUE" value="com.hiberbee.cucumber.definitions" />
     <option name="MAIN_CLASS_NAME" value="io.cucumber.core.cli.Main" />
     <module name="cucumber-confiture.common.test" />
-    <option name="PROGRAM_PARAMETERS" value=" --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter" />
+    <option name="PROGRAM_PARAMETERS" value="--plugin pretty --strict  --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter" />
     <option name="SUGGESTED_NAME" value="Feature: Common" />
     <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />
     <extension name="coverage">

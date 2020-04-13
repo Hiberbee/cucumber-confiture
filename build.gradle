@@ -12,6 +12,7 @@ group "com.hiberbee.cucumber"
 description "Monorepo entrypoint for Cucumber test packages"
 version "1.0.0-SNAPSHOT"
 
+
 def VERSIONS = [
   cucumber            : "5.6.0",
   cucumberReporting   : "4.0.40",

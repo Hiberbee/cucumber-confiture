@@ -1,7 +1,6 @@
 language: java
 script:
   - ./gradlew test
-  - ./gradlew sonarqube
   - ./gradlew publish
 env:
   global:

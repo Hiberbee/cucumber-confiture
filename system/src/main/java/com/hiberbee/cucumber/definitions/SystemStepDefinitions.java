@@ -3,18 +3,12 @@ package com.hiberbee.cucumber.definitions;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import org.assertj.core.api.Assertions;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.function.Try;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Scanner;
-import java.util.concurrent.Callable;
 
 public class SystemStepDefinitions {
-
-
 
   @When("{string} added and installed")
   public void dependencyAddedAndInstalled(final String dependency) {

@@ -1,0 +1,8 @@
+repositories:
+  - name: zalenium
+    url: https://raw.githubusercontent.com/zalando/zalenium/master/charts/zalenium
+
+releases:
+  - name: zalenium
+    namespace: default
+    chart: zalenium/zalenium

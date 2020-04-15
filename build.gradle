@@ -1,6 +1,7 @@
 plugins {
   id("java-library")
   id("com.github.ben-manes.versions") version "0.28.0"
+  id("com.google.cloud.tools.jib") version '2.1.0'
   id("idea")
   id("jacoco")
   id("maven-publish")
@@ -12,10 +13,9 @@ group "com.hiberbee.cucumber"
 description "Monorepo entrypoint for Cucumber test packages"
 version "1.0.0-SNAPSHOT"
 
-
 def VERSIONS = [
   cucumber            : "5.6.0",
-  cucumberReporting   : "4.0.40",
+  cucumberReporting   : "4.0.41",
   gradle              : "6.3",
   jetbrainsAnnotations: "19.0",
   junit               : "5.6.2",
@@ -55,9 +55,6 @@ jacoco {
 
 sonarqube {
   properties {
-    property "sonar.scm.provider", "git"
-    property "sonar.organization", "hiberbee"
-    property "sonar.host.url", "https://sonarcloud.io"
     property "sonar.login", System.getenv("SONARQUBE_TOKEN")
   }
 }
@@ -88,6 +85,7 @@ allprojects {
   apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
   apply plugin: "idea"
   apply plugin: "jacoco"
+  apply plugin: "org.sonarqube"
   apply plugin: "java-library"
 
   wrapper {
@@ -159,13 +157,6 @@ allprojects {
     testRuntimeOnly("org.junit.platform:junit-platform-runner")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
   }
-
-  sonarqube {
-    properties {
-      property "sonar.projectKey", project.name
-    }
-  }
-
 }
 
 subprojects {
@@ -174,12 +165,10 @@ subprojects {
     mavenLocal()
   }
 
-  apply plugin: "org.sonarqube"
   apply plugin: "maven-publish"
 
-
   tasks.register("features", CucumberFeature) {
-    args += ["--select-package", "features"]
+    args += ["--select-package", "features", "--exclude-tag", "ui", ]
   }
 
   test {

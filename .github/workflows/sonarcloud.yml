@@ -13,3 +13,4 @@ jobs:
       - run: gradle sonarqube
         env:
           SONARQUBE_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          SELENIUM_CREDENTIALS: ${{ secrets.SELENIUM_CREDENTIALS }}

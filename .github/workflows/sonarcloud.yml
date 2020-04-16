@@ -1,4 +1,4 @@
-name: JAR artifact publishing
+name: SonarQube static analysis
 on: push
 jobs:
   build:
@@ -11,8 +11,6 @@ jobs:
           java-version: 11
           server-id: github
           settings-path: ${{ github.workspace }}
-      - run: gradle build
-      - run: gradle publish
+      - run: gradle sonarqube
         env:
-          GITHUB_USERNAME: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONARQUBE_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}

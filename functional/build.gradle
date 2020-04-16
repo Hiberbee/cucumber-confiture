@@ -6,6 +6,7 @@ def VERSIONS = [
   hiberbeeCucumber: project.version,
   webdriverManager: "3.8.1",
   lombok          : "1.18.12",
+  testContainers  : "1.13.0",
   webdriver       : "4.0.0-alpha-5"
 ]
 
@@ -23,4 +24,5 @@ dependencies {
   implementation("org.seleniumhq.selenium:selenium-firefox-driver:$VERSIONS.webdriver")
   implementation("org.seleniumhq.selenium:selenium-edge-driver:$VERSIONS.webdriver")
   implementation("io.github.bonigarcia:webdrivermanager:$VERSIONS.webdriverManager")
+  testImplementation("org.testcontainers:selenium:$VERSIONS.testContainers")
 }

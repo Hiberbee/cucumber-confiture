@@ -3,7 +3,6 @@ Feature: Automate Web UI testing with Cucumber
 
   Background: Browser is installed and configured
     Given web browser is Chrome
-    And window state is minimized
 
   Scenario: Simple url navigation
     When user is opening https://google.com url

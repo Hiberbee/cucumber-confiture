@@ -168,7 +168,7 @@ subprojects {
   apply plugin: "maven-publish"
 
   tasks.register("features", CucumberFeature) {
-    args += ["--select-package", "features", "--exclude-tag", "ui", ]
+    args += ["--select-package", "features", ]
   }
 
   test {

@@ -6,3 +6,5 @@ releases:
   - name: zalenium
     namespace: default
     chart: zalenium/zalenium
+    values:
+      - functional/src/test/resources/values.yml

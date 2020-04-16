@@ -40,9 +40,10 @@ import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.function.Try;
 import org.junit.platform.commons.util.ReflectionUtils;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.devtools.browser.model.WindowState;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 
@@ -59,7 +60,7 @@ import java.util.function.Function;
 @Log
 public class SeleniumStepDefinitions {
 
-  private WebDriver driver;
+  @Autowired private WebDriver driver;
 
   @Value("#{cacheManager.getCache('feature')}")
   private Cache featureState;
@@ -85,7 +86,7 @@ public class SeleniumStepDefinitions {
 
   @ParameterType("(maximized|minimized|fullscreen|normal)")
   public WindowState windowState(@NotNull final String value) {
-    return WindowState.fromString(value.toUpperCase());
+    return WindowState.valueOf(value.toUpperCase());
   }
 
   @Given("window state is {windowState}")
@@ -95,7 +96,7 @@ public class SeleniumStepDefinitions {
         this.driver.manage().window().maximize();
         break;
       case MINIMIZED:
-        this.driver.manage().window().minimize();
+        this.driver.manage().window().setSize(new Dimension(0, 0));
         break;
       case FULLSCREEN:
         this.driver.manage().window().fullscreen();
@@ -132,14 +133,18 @@ public class SeleniumStepDefinitions {
 
   @Given("web browser is {browser}")
   public void webBrowserIs(@NotNull final DriverManagerType browser) {
-    WebDriverManager.getInstance(browser).setup();
-    @SuppressWarnings("unchecked")
-    final var maybeDriver =
-        (Optional<WebDriver>)
-            ReflectionUtils.tryToLoadClass(browser.browserClass())
-                .andThenTry(ReflectionUtils::newInstance)
-                .toOptional();
-    this.driver = maybeDriver.orElseGet(ChromeDriver::new);
+    if (this.driver == null) {
+      WebDriverManager.getInstance(browser).setup();
+      @SuppressWarnings("unchecked")
+      final var optional =
+          (Optional<WebDriver>)
+              ReflectionUtils.tryToLoadClass(browser.browserClass())
+                  .andThenTry(ReflectionUtils::newInstance)
+                  .toOptional();
+      this.driver = optional.orElseGet(ChromeDriver::new);
+    } else {
+      WebDriverManager.seleniumServerStandalone().setup();
+    }
   }
 
   @And("browser history should contain")
@@ -159,6 +164,13 @@ public class SeleniumStepDefinitions {
     Assertions.assertThat(this.driver)
         .extracting(extractingFunction)
         .matches(actual -> not.isBlank() == actual.contains(expected));
+  }
+
+  enum WindowState {
+    MAXIMIZED,
+    MINIMIZED,
+    FULLSCREEN,
+    NORMAL
   }
 
   enum State {

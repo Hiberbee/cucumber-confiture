@@ -10,7 +10,7 @@ jobs:
           java-version: 11
           server-id: github
           settings-path: ${{ github.workspace }}
-      - run: gradle build
+      - run: gradle assemble
       - run: gradle publish
         env:
           GITHUB_USERNAME: ${{ github.actor }}

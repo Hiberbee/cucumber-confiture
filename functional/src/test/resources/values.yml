@@ -1,0 +1,14 @@
+ingress:
+  enabled: true
+  tls: true
+  secretName: selenium-hiberbee-dev-tls
+  hostname: selenium.hiberbee.dev
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+serviceType: ClusterIP
+hub:
+  basicAuth:
+    enabled: true
+  desiredContainers: 1
+  maxDockerSeleniumContainers: 3

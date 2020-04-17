@@ -56,6 +56,10 @@ jacoco {
 sonarqube {
   properties {
     property "sonar.login", System.getenv("SONARQUBE_TOKEN")
+    property "sonar.host.url", "https://sonarcloud.io"
+    property "sonar.projectKey", rootProject.name
+    property "sonar.organization", "hiberbee"
+    property "sonar.links.homepage", "https://github.com/hiberbee/cucumber-confiture"
   }
 }
 
@@ -106,7 +110,7 @@ allprojects {
   }
 
   tasks.withType(JavaCompile).configureEach {
-    sourceCompatibility = JavaVersion.VERSION_14
+    sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_14
     it.options.setFork(true)
     it.options.setIncremental(true)

@@ -31,9 +31,9 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -53,13 +53,10 @@ public class SeleniumHubConfiguration {
   }
 
   @Bean
-  public WebDriver webDriver(final @NotNull Capabilities capabilities) {
-    final var credentials =
-        Optional.ofNullable(System.getenv("SELENIUM_CREDENTIAlS"))
-            .map(it -> String.format("%s@", it))
-            .orElse("");
+  public WebDriver webDriver(
+      final Environment environment, final @NotNull Capabilities capabilities) {
     return RemoteWebDriver.builder()
-        .url("https://" + credentials + "selenium.hiberbee.dev/wd/hub")
+        .url("https://selenium.hiberbee.dev/wd/hub")
         .addAlternative(capabilities)
         .build();
   }

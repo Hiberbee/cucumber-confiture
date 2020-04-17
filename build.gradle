@@ -106,8 +106,8 @@ allprojects {
   }
 
   tasks.withType(JavaCompile).configureEach {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_14
+    targetCompatibility = JavaVersion.VERSION_14
     it.options.setFork(true)
     it.options.setIncremental(true)
     dependsOn(tasks.named("processResources"))
@@ -168,7 +168,7 @@ subprojects {
   apply plugin: "maven-publish"
 
   tasks.register("features", CucumberFeature) {
-    args += ["--select-package", "features", ]
+    args += ["--select-package", "features",]
   }
 
   test {

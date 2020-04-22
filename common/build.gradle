@@ -8,7 +8,7 @@ repositories {
   jcenter()
 }
 
-def VERSIONS = [
+def VERSIONS  = [
   assertj             : "3.15.0",
   cucumberReport      : "4.0.40",
   gradle              : "6.3",
@@ -33,13 +33,15 @@ dependencies {
   api("org.springframework.boot:spring-boot-starter-cache")
 
   implementation("com.slack.api:slack-api-client:$VERSIONS.slack")
-  implementation("org.springframework.boot:spring-boot-starter-test")
   implementation("io.cucumber:cucumber-junit-platform-engine")
+  implementation("org.springframework.boot:spring-boot-configuration-processor")
+  implementation("org.springframework.boot:spring-boot-starter-test") {
+    exclude group: "com.vaadin.external.google", module: "android-json"
+  }
   implementation("org.yaml:snakeyaml") {
     version {
       strictly VERSIONS.yaml
     }
     because "https://app.snyk.io/vuln/SNYK-JAVA-ORGYAML-537645"
   }
-  implementation("org.springframework.boot:spring-boot-configuration-processor")
 }

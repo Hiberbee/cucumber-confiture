@@ -1,0 +1,29 @@
+settings:
+  artifacts-dir: build/reports
+
+execution:
+  - scenario: zombie
+    executor: gatling
+
+modules:
+  console:
+    disable: false
+    screen: console
+
+reporting:
+  - module: final-stats
+    summary: true
+    percentiles: true
+    summary-labels: true
+    failed-labels: true
+    test-duration: true
+
+scenarios:
+  zombie:
+    headers:
+      Connection: close
+    gatling:
+      jvmArgs: '-server -Xmx2G -XX:+UseG1GC -XX:MaxGCPauseMillis=30 -XX:G1HeapRegionSize=16m -XX:+ParallelRefProcEnabled -XX:+PerfDisableSharedMem -XX:+OptimizeStringConcat'
+    default-address: https://hiberbee.dev
+    script: stress/src/main/scala/com/hiberbee/simulations/IndexPageSimulation.scala
+    simulation: com.hiberbee.simulations.IndexPageSimulation

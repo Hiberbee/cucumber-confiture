@@ -10,5 +10,4 @@ buildCache {
   }
 }
 
-rootProject.name = "cucumber-confiture"
-include("common", "functional", "system", "infrastructure", "integrational")
+include("common", "functional", "system", "infrastructure", "stress", "integrational")

@@ -1,7 +1,6 @@
 plugins {
   id("java-library")
-  id("com.github.ben-manes.versions") version "0.28.0"
-  id("com.google.cloud.tools.jib") version '2.1.0'
+  id("com.google.cloud.tools.jib") version '2.2.0'
   id("idea")
   id("jacoco")
   id("maven-publish")
@@ -17,8 +16,10 @@ def VERSIONS = [
   cucumber            : "5.6.0",
   cucumberReporting   : "4.0.42",
   gradle              : "6.4-rc-1",
+  guava               : "28.2-jre",
   jetbrainsAnnotations: "19.0",
-  junit               : "5.6.2",
+  junit               : "5.7.0-M1",
+  netty               : "4.1.48.Final",
   lombok              : "1.18.12",
   springBoot          : "2.2.6.RELEASE",
 ]
@@ -86,11 +87,11 @@ allprojects {
   group = rootProject.group
   version = rootProject.version
 
-  apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
   apply plugin: "idea"
   apply plugin: "jacoco"
-  apply plugin: "org.sonarqube"
   apply plugin: "java-library"
+  apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
+  apply plugin: "org.sonarqube"
 
   wrapper {
     distributionType = Wrapper.DistributionType.ALL
@@ -103,10 +104,6 @@ allprojects {
       downloadSources = true
       excludeDirs += files("gradle", ".gradle", "build")
     }
-  }
-
-  jacoco {
-    toolVersion "0.8.5"
   }
 
   tasks.withType(JavaCompile).configureEach {
@@ -130,7 +127,7 @@ allprojects {
   }
 
   tasks.withType(JacocoCoverageVerification).configureEach {
-    setEnabled(true)
+    enabled = true
   }
 
   tasks.withType(JacocoReport).configureEach {
@@ -149,6 +146,11 @@ allprojects {
   }
 
   dependencies {
+    implementation("com.google.guava:guava") {
+      version {
+        strictly VERSIONS.guava
+      }
+    }
     implementation platform("org.junit:junit-bom:$VERSIONS.junit")
     implementation platform("io.cucumber:cucumber-core:$VERSIONS.cucumber")
     implementation platform("org.springframework.boot:spring-boot-dependencies:$VERSIONS.springBoot")

@@ -1,0 +1,72 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2020 Hiberbee
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+plugins {
+  id("com.github.lkishalmi.gatling") version "3.3.0"
+  id("scala")
+}
+
+sourceSets {
+  gatling {
+    scala.srcDirs(files("src/main/scala"))
+    resources.srcDirs(files("src/main/resources"))
+  }
+}
+
+def VERSIONS = [gatling: "3.3.0", scala: "2.12.11", cucumber: "master-SNAPSHOT", scalaTest: "3.1.1"]
+gatling {
+  logLevel = LogLevel.ERROR
+  toolVersion = VERSIONS.gatling
+  jvmArgs = ['-server',
+             '-Xmx2G',
+             '-XX:+UseG1GC',
+             '-XX:MaxGCPauseMillis=30',
+             '-XX:G1HeapRegionSize=16m',
+             '-XX:+ParallelRefProcEnabled',
+             '-XX:+PerfDisableSharedMem',
+             '-XX:+OptimizeStringConcat']
+}
+repositories {
+  mavenCentral()
+  maven { url 'https://jitpack.io' }
+}
+
+tasks.withType(ScalaCompile).configureEach {
+  it.sourceCompatibility(JavaVersion.VERSION_11.majorVersion)
+  it.targetCompatibility(JavaVersion.VERSION_14.majorVersion)
+  it.options.fork = true
+  it.options.incremental = true
+  ScalaCompileOptions.metaClass.daemonServer = true
+  ScalaCompileOptions.metaClass.useCompileDaemon = true
+}
+
+dependencies {
+  implementation("org.scala-lang:scala-library:$VERSIONS.scala")
+  implementation("com.github.cucumber.cucumber-jvm-scala:cucumber-scala_2.12:$VERSIONS.cucumber")
+  implementation("org.scalatest:scalatest_2.12:$VERSIONS.scalaTest")
+  implementation("io.gatling.highcharts:gatling-charts-highcharts:$VERSIONS.gatling")
+
+  implementation("io.gatling:gatling-http:$VERSIONS.gatling")
+  implementation("io.gatling:gatling-test-framework:$VERSIONS.gatling")
+}
+

@@ -10,4 +10,4 @@ jobs:
           java-version: 11
           server-id: github
           settings-path: ${{ github.workspace }}
-      - run: gradle sonarqube
+      - run: ./gradlew sonarqube

@@ -24,17 +24,6 @@
 
 package com.hiberbee.gatling.simulations
 
-/*
- * Copyright by Piping Rock Health Products, LLC
- * 2020 (C) All Rights Reserved
- *
- * This file is a part of Projects.qa-test-automation.gatling package
- * and is subject to the terms and conditions defined
- * in file 'LICENSE', which is part of this source code.
- * Unauthorized copying of this file, via any medium
- * is strictly prohibited - proprietary and confidential
- */
-
 import io.gatling.core.Predef._
 import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}
 import io.gatling.http.Predef._

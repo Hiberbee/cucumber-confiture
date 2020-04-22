@@ -7,10 +7,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
         with:
-          java-version: 14
+          java-version: 11
           server-id: github
           settings-path: ${{ github.workspace }}
-      - run: gradle sonarqube -Dsonar.host.url=https://sonarcloud.io
-        env:
-          SONARQUBE_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
-          SELENIUM_CREDENTIALS: ${{ secrets.SELENIUM_CREDENTIALS }}
+      - run: gradle sonarqube

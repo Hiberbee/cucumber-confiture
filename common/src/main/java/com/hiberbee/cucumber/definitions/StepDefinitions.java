@@ -165,7 +165,7 @@ public class StepDefinitions {
     this.scenarioState.clear();
   }
 
-  enum State {
+  public enum State {
     BASE_URL
   }
 }

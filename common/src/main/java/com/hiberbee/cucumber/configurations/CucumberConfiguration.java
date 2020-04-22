@@ -28,6 +28,8 @@ import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
 import io.cucumber.junit.platform.engine.Cucumber;
 import io.cucumber.spring.CucumberContextConfiguration;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,11 +57,13 @@ public class CucumberConfiguration {
     return Slack.getInstance().methods(token);
   }
 
-  public interface Caches {
-    String SUITE = "suite";
-    String HOOK = "hook";
-    String FEATURE = "feature";
-    String SCENARIO = "scenario";
+  @NoArgsConstructor(access = AccessLevel.PRIVATE)
+  public static class Caches {
+
+    public static final String FEATURE = "feature";
+    public static final String SCENARIO = "scenario";
+    static final String SUITE = "suite";
+    static final String HOOK = "hook";
 
     @Contract(value = " -> new", pure = true)
     static String @NotNull [] getNames() {

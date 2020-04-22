@@ -24,11 +24,14 @@
 
 package com.hiberbee.cucumber.support;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.java.Log;
 import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 
 @Log
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CucumberRun {
 
   public static void fail(final @NotNull Throwable throwable) {

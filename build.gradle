@@ -17,7 +17,7 @@ def VERSIONS = [
   cucumberReporting   : "4.0.42",
   gradle              : "6.4-rc-1",
   guava               : "28.2-jre",
-  jetbrainsAnnotations: "19.0",
+  jetbrainsAnnotations: "19.0.0",
   junit               : "5.7.0-M1",
   netty               : "4.1.48.Final",
   lombok              : "1.18.12",
@@ -156,6 +156,7 @@ allprojects {
     implementation platform("io.cucumber:cucumber-core:$VERSIONS.cucumber")
     implementation platform("org.springframework.boot:spring-boot-dependencies:$VERSIONS.springBoot")
 
+    compileClasspath("org.jetbrains:annotations:$VERSIONS.jetbrainsAnnotations")
     testImplementation("de.monochromata.cucumber:reporting-plugin:$VERSIONS.cucumberReporting")
     testImplementation("io.cucumber:cucumber-junit-platform-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-api")

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JsonSchemaMappingsProjectConfiguration">
+    <state>
+      <map>
+        <entry key="github-action">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="github-action" />
+              <option name="relativePathToSchema" value="http://json.schemastore.org/github-action" />
+              <option name="applicationDefined" value="true" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value=".github/workflows/release.yml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="helmfile">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="helmfile" />
+              <option name="relativePathToSchema" value="../../yamlschema.net/src/jsonschema/helmfile/helmfile.jsonschema" />
+              <option name="schemaVersion" value="JSON Schema version 7" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="pattern" value="true" />
+                    <option name="path" value="helmfile.yaml" />
+                    <option name="mappingKind" value="Pattern" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+        <entry key="travis">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="travis" />
+              <option name="relativePathToSchema" value="http://json.schemastore.org/travis" />
+              <option name="applicationDefined" value="true" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value=".travis.yml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
+      </map>
+    </state>
+  </component>
+</project>

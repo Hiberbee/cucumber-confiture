@@ -52,12 +52,10 @@ repositories {
 }
 
 tasks.withType(ScalaCompile).configureEach {
-  it.sourceCompatibility(JavaVersion.VERSION_11.majorVersion)
-  it.targetCompatibility(JavaVersion.VERSION_14.majorVersion)
-  it.options.fork = true
-  it.options.incremental = true
-  ScalaCompileOptions.metaClass.daemonServer = true
-  ScalaCompileOptions.metaClass.useCompileDaemon = true
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
+  options.fork = true
+  options.incremental = true
 }
 
 dependencies {

@@ -33,22 +33,29 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Configuration
 public class SeleniumHubConfiguration {
 
   @Bean
   public Capabilities capabilities() {
+    final var args =
+        Stream.of(
+                "ignore-certificate-errors",
+                "disable-ipv6",
+                "no-sandbox",
+                "disable-extensions",
+                "disable-gpu",
+                "disable-dev-shm-usage",
+                "proxy-bypass-list=localhost",
+                "window-size=1400x900")
+            .map(a -> String.format("--%s", a))
+            .collect(Collectors.toList());
+
     return new ChromeOptions()
-        .setHeadless(true)
-        .addArguments(
-            Arrays.stream(
-                    "ignore-certificate-errors,headless,disable-ipv6,no-sandbox,disable-extensions,disable-gpu,disable-dev-shm-usage,proxy-bypass-list=localhost,window-size=1400x900"
-                        .split(","))
-                .map(a -> String.format("--%s", a))
-                .collect(Collectors.toList()))
+        .addArguments(args)
         .setExperimentalOption("useAutomationExtension", false);
   }
 

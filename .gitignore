@@ -1,6 +1,5 @@
 .env
 .gradle
-.idea
 build
 *.log
 out

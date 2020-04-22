@@ -22,22 +22,27 @@
  * SOFTWARE.
  */
 
-package com.hiberbee.cucumber.support;
+package com.hiberbee.cucumber.generators;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.extern.java.Log;
+import com.hiberbee.cucumber.definitions.StepDefinitions;
 import org.assertj.core.api.Assertions;
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.function.Try;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@Log
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CucumberRun {
+@SpringBootTest(classes = MethodNameGenerator.class)
+class MethodNameGeneratorTest {
 
-  @SneakyThrows(AssertionError.class)
-  public static void fail(final @NotNull Throwable throwable) {
-    log.fine(throwable.getMessage());
-    Assertions.fail(throwable.getMessage(), throwable);
+  @Autowired private MethodNameGenerator methodNameGenerator;
+
+  @Test
+  void testGenerate() {
+    Try.call(() -> StepDefinitions.class.getMethod("env", String.class))
+        .andThenTry(
+            method ->
+                Assertions.assertThat(
+                        this.methodNameGenerator.generate(new StepDefinitions(), method, "$HOME"))
+                    .isEqualTo(method.getName()));
   }
 }

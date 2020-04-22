@@ -15,7 +15,7 @@ version "1.0.0-SNAPSHOT"
 def VERSIONS = [
   cucumber            : "5.6.0",
   cucumberReporting   : "4.0.42",
-  gradle              : "6.4-rc-1",
+  gradle              : "6.4-rc-2",
   guava               : "28.2-jre",
   jetbrainsAnnotations: "19.0.0",
   junit               : "5.7.0-M1",
@@ -24,30 +24,35 @@ def VERSIONS = [
   springBoot          : "2.2.6.RELEASE",
 ]
 
+wrapper {
+  distributionType = Wrapper.DistributionType.ALL
+  gradleVersion = VERSIONS.gradle
+}
+
 idea {
   project {
     settings {
       copyright {
-        useDefault = "Hiberbee"
+        useDefault = "MIT"
         profiles {
-          Hiberbee {
+          MIT {
             notice = file("LICENSE").readLines().join("\n")
           }
         }
       }
     }
   }
+  module {
+    downloadJavadoc = false
+    downloadSources = true
+    excludeDirs += files("gradle", ".gradle")
+    inheritOutputDirs = true
+    outputDir = file("build")
+  }
 }
 
 repositories {
   mavenCentral()
-}
-
-def allTestCoverageFile = "${rootProject.buildDir}/jacoco/allTestCoverage.exec"
-tasks.create("jacocoMerge", JacocoMerge) {
-  group = "verification"
-  destinationFile = file(allTestCoverageFile)
-  executionData = project.fileTree(dir: '.', include: '**/build/jacoco/test.exec')
 }
 
 jacoco {
@@ -93,17 +98,13 @@ allprojects {
   apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
   apply plugin: "org.sonarqube"
 
-  wrapper {
-    distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = VERSIONS.gradle
-  }
-
   idea {
     module {
       downloadJavadoc = false
       downloadSources = true
+      excludeDirs += files("gradle", ".gradle")
       inheritOutputDirs = true
-      excludeDirs += files("gradle", ".gradle", "build")
+      outputDir = file("build")
     }
   }
 
@@ -124,7 +125,6 @@ allprojects {
       enabled = true
       dumpOnExit = true
     }
-    finalizedBy(jacocoMerge)
   }
 
   tasks.withType(JacocoCoverageVerification).configureEach {
@@ -161,26 +161,21 @@ allprojects {
     testImplementation("io.cucumber:cucumber-junit-platform-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-console")
     testRuntimeOnly("org.junit.platform:junit-platform-runner")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
   }
 }
 
 subprojects {
 
-  repositories {
-    mavenLocal()
-  }
-
   apply plugin: "maven-publish"
 
   tasks.register("features", CucumberFeature) {
-    args += ["--select-package", "features",]
-  }
-
-  test {
-    dependsOn(tasks.getByName("features"))
+    args += [
+      "--select-package",
+      "features",
+    ]
   }
 
   publishing {

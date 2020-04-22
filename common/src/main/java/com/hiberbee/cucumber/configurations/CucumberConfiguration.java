@@ -24,15 +24,12 @@
 
 package com.hiberbee.cucumber.configurations;
 
-import com.slack.api.Slack;
-import com.slack.api.methods.MethodsClient;
 import io.cucumber.junit.platform.engine.Cucumber;
 import io.cucumber.spring.CucumberContextConfiguration;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -50,11 +47,6 @@ public class CucumberConfiguration {
   @Bean
   public CacheManager cacheManager() {
     return new ConcurrentMapCacheManager(Caches.getNames());
-  }
-
-  @Bean
-  public MethodsClient slack(@Value("cucumber.slack.token") final String token) {
-    return Slack.getInstance().methods(token);
   }
 
   @NoArgsConstructor(access = AccessLevel.PRIVATE)

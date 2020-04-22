@@ -22,9 +22,8 @@
  * SOFTWARE.
  */
 
-package com.hiberbee.cucumber.configuration;
+package com.hiberbee.cucumber.configurations;
 
-import com.hiberbee.cucumber.configurations.CucumberConfiguration;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

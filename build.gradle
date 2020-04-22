@@ -102,6 +102,7 @@ allprojects {
     module {
       downloadJavadoc = false
       downloadSources = true
+      inheritOutputDirs = true
       excludeDirs += files("gradle", ".gradle", "build")
     }
   }

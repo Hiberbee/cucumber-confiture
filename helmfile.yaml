@@ -8,3 +8,5 @@ releases:
     chart: zalenium/zalenium
     values:
       - functional/src/test/resources/values.yml
+  - name: taurus
+    namespace: default

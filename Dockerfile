@@ -2,4 +2,4 @@ FROM blazemeter/taurus
 WORKDIR /app
 COPY . .
 ENTRYPOINT ["bzt"]
-CMD ["config.yml"]
+CMD ["taurus.yaml"]

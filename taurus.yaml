@@ -1,0 +1,36 @@
+#!/usr/bin/env bzt
+provisioning: local
+
+settings:
+  artifacts-dir: build/reports/taurus
+  check-updates: true
+  default-executor: gatling
+
+execution:
+  - scenario: zombie
+    executor: gatling
+    concurrency: 10000
+    ramp-up: 60s
+    iterations: 100
+
+scenarios:
+  zombie:
+    simulation: com.hiberbee.gatling.simulations.IndexPageSimulation
+    gatling:
+      version: 3.3.0
+      java-opts: '-server -Xmx2G -XX:+UseG1GC -XX:MaxGCPauseMillis=30 -XX:G1HeapRegionSize=16m -XX:+ParallelRefProcEnabled -XX:+PerfDisableSharedMem -XX:+OptimizeStringConcat'
+    default-address: https://hiberbee.dev
+    headers:
+      Accept: text/html
+      Connection: close
+    requests:
+      - url: /
+        assert:
+          - subject: body         # subject for search (defalut: body)
+            regexp: false         # whether expression is regular (default: false)
+            not: false            # invert condition (default: false)
+            contains:             # expression list for assertion (mandatory)
+              - Hiberbee
+        follow-redirects: true    # true by default
+        headers:
+          Content-Type: text/html

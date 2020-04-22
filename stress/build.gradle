@@ -33,7 +33,8 @@ sourceSets {
   }
 }
 
-def VERSIONS = [gatling: "3.3.0", scala: "2.12.11", cucumber: "master-SNAPSHOT", scalaTest: "3.1.1"]
+def VERSIONS = [gatling: "3.3.0", scala: "2.12.11", scalaTest: "3.1.1"]
+
 gatling {
   logLevel = LogLevel.ERROR
   toolVersion = VERSIONS.gatling
@@ -46,24 +47,21 @@ gatling {
              '-XX:+PerfDisableSharedMem',
              '-XX:+OptimizeStringConcat']
 }
+
 repositories {
   mavenCentral()
-  maven { url 'https://jitpack.io' }
 }
 
 tasks.withType(ScalaCompile).configureEach {
-  sourceCompatibility = JavaVersion.VERSION_11
-  targetCompatibility = JavaVersion.VERSION_11
   options.fork = true
   options.incremental = true
 }
 
 dependencies {
   implementation("org.scala-lang:scala-library:$VERSIONS.scala")
-  implementation("com.github.cucumber.cucumber-jvm-scala:cucumber-scala_2.12:$VERSIONS.cucumber")
   implementation("org.scalatest:scalatest_2.12:$VERSIONS.scalaTest")
-  implementation("io.gatling.highcharts:gatling-charts-highcharts:$VERSIONS.gatling")
 
+  implementation("io.gatling.highcharts:gatling-charts-highcharts:$VERSIONS.gatling")
   implementation("io.gatling:gatling-http:$VERSIONS.gatling")
   implementation("io.gatling:gatling-test-framework:$VERSIONS.gatling")
 }

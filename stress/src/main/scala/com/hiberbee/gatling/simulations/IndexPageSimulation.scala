@@ -36,26 +36,43 @@ package com.hiberbee.gatling.simulations
  */
 
 import io.gatling.core.Predef._
+import io.gatling.core.structure.{ChainBuilder, ScenarioBuilder}
 import io.gatling.http.Predef._
+import io.gatling.http.protocol.HttpProtocolBuilder
 
 class IndexPageSimulation extends Simulation {
 
-  val users: Int = Integer.getInteger("users", 1)
-  val period: Int = Integer.getInteger("period", 1)
-  val rps: Int = Integer.getInteger("rps", 1)
+  val concurrency: Int = Integer.getInteger("concurrency", 25).toInt
+  val rampUpTime: Int = Integer.getInteger("ramp-up", 0).toInt
+  val holdForTime: Int = Integer.getInteger("hold-for", 0).toInt
+  val throughput: Integer = Integer.getInteger("throughput")
+  val iterationLimit: Integer = Integer.getInteger("iterations")
+  val baseUrl: String = System.getProperty("base-url", "https://hiberbee.dev")
+  val durationLimit: Int = rampUpTime + holdForTime
 
-  def baseUrl = "https://hiberbee.dev"
+  var httpConf: HttpProtocolBuilder = http.baseUrl(baseUrl).header(HttpHeaderNames.Connection, HttpHeaderValues.Close).disableCaching
 
-  setUp(
-    scenario(this.getClass.getSimpleName)
-      .exec(http("home").get("/").header(HttpHeaderNames.Accept, HttpHeaderValues.TextHtml).check(status.is(200)))
-      .inject(rampConcurrentUsers(users / 2) to users during 10)
-      .throttle(reachRps(rps) in period)
-      .protocols(http.baseUrl(baseUrl))
-      .disablePauses)
-    .assertions(
-      global.responseTime.max.lt(1000),
-      global.successfulRequests.percent.gt(95)
-    )
+  var execution: ChainBuilder = exec {
+    http("/").get("/").header(HttpHeaderNames.ContentType, HttpHeaderValues.TextHtml).check(substring("""Hiberbee""").exists)
+  }
 
+  var testScenario: ScenarioBuilder = scenario("Index Scenario")
+
+  if (iterationLimit == null)
+    testScenario = testScenario.forever {
+      execution
+    }
+  else
+    testScenario = testScenario.repeat(iterationLimit.toInt) {
+      execution
+    }
+
+  var testSetup: SetUp = setUp(testScenario.inject(atOnceUsers(concurrency)).protocols(httpConf))
+  if (throughput != null) testSetup = testSetup.throttle(reachRps(throughput.toInt) in rampUpTime, holdFor(Int.MaxValue))
+  if (durationLimit > 0) testSetup.maxDuration(durationLimit)
+  testSetup.assertions(
+    global.responseTime.max.lte(1000),
+    global.requestsPerSec.gt(500),
+    global.successfulRequests.percent.gte(95),
+  )
 }

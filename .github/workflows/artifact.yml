@@ -11,6 +11,7 @@ jobs:
           server-id: github
           settings-path: ${{ github.workspace }}
       - run: ./gradlew assemble
+      - run: ./gradlew test
       - run: ./gradlew publish
         env:
           GITHUB_USERNAME: ${{ github.actor }}

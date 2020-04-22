@@ -55,17 +55,13 @@ repositories {
   mavenCentral()
 }
 
-jacoco {
-  toolVersion = "0.8.5"
-}
-
 sonarqube {
   properties {
-    property "sonar.login", System.getenv("SONARQUBE_TOKEN")
-    property "sonar.host.url", "https://sonarcloud.io"
+    property "sonar.login", System.getProperty("sonar.token")
+    property "sonar.host.url", System.getProperty("sonar.url")
     property "sonar.projectKey", rootProject.name
-    property "sonar.organization", "hiberbee"
-    property "sonar.links.homepage", "https://github.com/hiberbee/cucumber-confiture"
+    property "sonar.organization", System.getProperty("organization")
+    property "sonar.links.homepage", System.getProperty("vcs.url")
   }
 }
 
@@ -83,7 +79,7 @@ class CucumberFeature extends JavaExec {
         getSourceSets().
         findByName("test").
         runtimeClasspath)
-    super.args("--include-engine", "cucumber", "--reports-dir", "build/reports")
+    super.args("--include-engine", "cucumber", "--reports-dir", "build/reports/cucumber")
     super.finalizedBy(project.tasks.getByName("jacocoTestReport"))
   }
 }
@@ -95,8 +91,12 @@ allprojects {
   apply plugin: "idea"
   apply plugin: "jacoco"
   apply plugin: "java-library"
-  apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
   apply plugin: "org.sonarqube"
+  apply plugin: "org.jetbrains.gradle.plugin.idea-ext"
+
+  jacoco {
+    toolVersion = "0.8.5"
+  }
 
   idea {
     module {
@@ -125,6 +125,7 @@ allprojects {
       enabled = true
       dumpOnExit = true
     }
+    finalizedBy(tasks.named("jacocoTestReport"))
   }
 
   tasks.withType(JacocoCoverageVerification).configureEach {

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.hiberbee.cucumber.confiturations;
+package com.hiberbee.cucumber.configurations;
 
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.Capabilities;

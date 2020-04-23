@@ -33,7 +33,7 @@ sourceSets {
   }
 }
 
-def VERSIONS = [gatling: "3.3.0", scala: "2.12.11", scalaTest: "3.1.1"]
+def VERSIONS = [gatling: "3.3.0", scala: "2.12.11", scalaTest: "3.3.0-SNAP2"]
 
 gatling {
   logLevel = LogLevel.ERROR

@@ -45,7 +45,7 @@ idea {
   module {
     downloadJavadoc = false
     downloadSources = true
-    excludeDirs += files("gradle", ".gradle")
+    excludeDirs += files("gradle", "stress", ".gradle")
     inheritOutputDirs = true
     outputDir = file("build")
   }

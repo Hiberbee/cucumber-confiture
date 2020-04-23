@@ -1,13 +1,2 @@
-pluginManagement {
-  repositories {
-    gradlePluginPortal()
-  }
-}
-buildCache {
-  local {
-    setEnabled(true)
-    setDirectory(file("${rootProject.projectDir.absolutePath}/.gradle/cache"))
-  }
-}
-
-include("common", "functional", "system", "infrastructure", "stress", "integrational")
+rootProject.name = rootProject.projectDir.name
+include("common", "functional", "system", "infrastructure", "integrational")

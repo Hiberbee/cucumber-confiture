@@ -1,0 +1,14 @@
+on:
+  push:
+    branches: [ master ]
+env:
+  GITHUB_USERNAME: ${{ github.actor }}
+  GITHUB_TOKEN: ${{ secrets.github }}
+jobs:
+  release-package:
+    runs-on: ubuntu-latest
+    container:
+      image: adoptopenjdk:11-jre-openj9
+    steps:
+      - uses: actions/checkout@v2
+      - run: ./gradlew test publish

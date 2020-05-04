@@ -13,7 +13,7 @@ description "Monorepo entrypoint for Cucumber test packages"
 version "1.0.0-SNAPSHOT"
 
 def VERSIONS = [
-  cucumber            : "5.6.0",
+  cucumber            : "5.7.0",
   cucumberReporting   : "4.0.42",
   gradle              : "6.4-rc-2",
   guava               : "28.2-jre",

@@ -4,7 +4,7 @@ plugins {
 
 def VERSIONS = [
   hiberbeeCucumber: project.version,
-  webdriverManager: "3.8.1",
+  webdriverManager: "4.0.0",
   lombok          : "1.18.12",
   testContainers  : "1.14.0",
   webdriver       : "3.141.59"

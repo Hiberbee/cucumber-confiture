@@ -21,7 +21,7 @@ def VERSIONS = [
   junit               : "5.7.0-M1",
   netty               : "4.1.48.Final",
   lombok              : "1.18.12",
-  springBoot          : "2.2.6.RELEASE",
+  springBoot          : "2.3.0.RELEASE",
 ]
 
 wrapper {

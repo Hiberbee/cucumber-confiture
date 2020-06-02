@@ -38,7 +38,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 @Cucumber
-@CucumberContextConfiguration
 @EnableAutoConfiguration
 @EnableCaching
 @ComponentScan("com.hiberbee.cucumber")

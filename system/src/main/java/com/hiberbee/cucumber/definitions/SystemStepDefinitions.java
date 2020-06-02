@@ -2,6 +2,7 @@ package com.hiberbee.cucumber.definitions;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
+import io.cucumber.spring.CucumberContextConfiguration;
 import org.assertj.core.api.Assertions;
 import org.junit.platform.commons.function.Try;
 

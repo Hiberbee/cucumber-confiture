@@ -13,15 +13,14 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static io.fabric8.kubernetes.assertions.Assertions.assertThat;
-
 public class KubernetesStepDefinitions {
 
   @Autowired private KubernetesClient kubernetesClient;
 
   @Given("kubernetes is running on {string}")
   public void kubernetesIsRunningOn(final String host) {
-    assertThat(this.kubernetesClient).matches(it -> it.getMasterUrl().getHost().contains(host));
+    Assertions.assertThat(this.kubernetesClient)
+        .matches(it -> it.getMasterUrl().getHost().contains(host));
   }
 
   @Given("namespace is {string}")

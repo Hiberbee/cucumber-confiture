@@ -32,6 +32,7 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
+import io.cucumber.spring.CucumberContextConfiguration;
 import lombok.extern.java.Log;
 import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.Contract;
@@ -56,7 +57,7 @@ import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
-@Log
+@CucumberContextConfiguration
 @SpringBootTest(classes = CucumberConfiguration.class)
 public class StepDefinitions {
 

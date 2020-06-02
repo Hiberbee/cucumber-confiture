@@ -10,7 +10,7 @@ repositories {
 def VERSIONS = [
   hiberbeeCucumber: "1.0.0-SNAPSHOT",
   lombok          : "1.18.12",
-  guava           : "28.2-jre"
+  guava           : "29.0-jre"
 ]
 
 dependencies {

@@ -33,8 +33,8 @@ import io.cucumber.java.ParameterType;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
-import io.github.bonigarcia.wdm.DriverManagerType;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.github.bonigarcia.wdm.config.DriverManagerType;
 import lombok.extern.java.Log;
 import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +60,7 @@ import java.util.function.Function;
 @Log
 public class SeleniumStepDefinitions {
 
-  @Autowired private WebDriver driver;
+  private WebDriver driver;
 
   @Value("#{cacheManager.getCache('feature')}")
   private Cache featureState;

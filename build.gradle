@@ -15,7 +15,7 @@ version "1.0.0-SNAPSHOT"
 
 def VERSIONS = [
   cucumber            : "6.0.0-RC2",
-  cucumberReporting   : "4.0.52",
+  cucumberReporting   : "4.0.55",
   gradle              : "6.5-rc-1",
   guava               : "29.0-jre",
   jetbrainsAnnotations: "19.0.0",

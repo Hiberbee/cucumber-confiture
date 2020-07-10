@@ -21,48 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-plugins {
-  id("com.github.lkishalmi.gatling") version "3.3.0"
-  id("scala")
-}
 
-sourceSets {
-  gatling {
-    scala.srcDirs(files("src/main/scala"))
-    resources.srcDirs(files("src/main/resources"))
+package com.hiberbee.cucumber.gherkin.dsl;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.nio.file.*;
+import java.util.function.Predicate;
+
+public enum Inode {
+  FILE,
+  DIRECTORY,
+  EXECUTABLE;
+
+  public @NotNull Predicate<Path> predicate() {
+    switch (this) {
+      case DIRECTORY:
+        return Files::isDirectory;
+      case EXECUTABLE:
+        return Files::isExecutable;
+      case FILE:
+      default:
+        return Files::isRegularFile;
+    }
   }
 }
-
-def VERSIONS = [gatling: "3.3.0", scala: "2.12.11", scalaTest: "3.1.1"]
-
-gatling {
-  logLevel = LogLevel.ERROR
-  toolVersion = VERSIONS.gatling
-  jvmArgs = ['-server',
-             '-Xmx2G',
-             '-XX:+UseG1GC',
-             '-XX:MaxGCPauseMillis=30',
-             '-XX:G1HeapRegionSize=16m',
-             '-XX:+ParallelRefProcEnabled',
-             '-XX:+PerfDisableSharedMem',
-             '-XX:+OptimizeStringConcat']
-}
-
-repositories {
-  mavenCentral()
-}
-
-tasks.withType(ScalaCompile).configureEach {
-  options.fork = true
-  options.incremental = true
-}
-
-dependencies {
-  implementation("org.scala-lang:scala-library:$VERSIONS.scala")
-  implementation("org.scalatest:scalatest_2.12:$VERSIONS.scalaTest")
-
-  implementation("io.gatling.highcharts:gatling-charts-highcharts:$VERSIONS.gatling")
-  implementation("io.gatling:gatling-http:$VERSIONS.gatling")
-  implementation("io.gatling:gatling-test-framework:$VERSIONS.gatling")
-}
-

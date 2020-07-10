@@ -25,12 +25,13 @@
 package com.hiberbee.cucumber.configurations;
 
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.core.DefaultDockerClientConfig;
-import com.github.dockerjava.core.DockerClientBuilder;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
-import io.fabric8.kubernetes.client.KubernetesClient;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import com.github.dockerjava.core.*;
+import com.github.dockerjava.jaxrs.JerseyDockerHttpClient;
+import com.github.dockerjava.transport.DockerHttpClient;
+import io.fabric8.kubernetes.client.*;
+import org.springframework.context.annotation.*;
+
+import java.net.URI;
 
 @Configuration
 public class InfrastructureConfiguration {
@@ -41,11 +42,20 @@ public class InfrastructureConfiguration {
   }
 
   @Bean
-  public DockerClient dockerClient() {
-    final var config =
-        DefaultDockerClientConfig.createDefaultConfigBuilder()
-            .withRegistryUrl("https://index.docker.io/v2/")
-            .build();
-    return DockerClientBuilder.getInstance(config).build();
+  public DockerHttpClient dockerHttpClient() {
+    return new JerseyDockerHttpClient.Builder()
+        .dockerHost(URI.create("unix:///var/run/docker.sock"))
+        .build();
+  }
+
+  @Bean
+  public DockerClientConfig dockerClientConfig() {
+    return DefaultDockerClientConfig.createDefaultConfigBuilder().build();
+  }
+
+  @Bean
+  public DockerClient dockerClient(
+      final DockerHttpClient httpClient, final DockerClientConfig config) {
+    return DockerClientBuilder.getInstance(config).withDockerHttpClient(httpClient).build();
   }
 }

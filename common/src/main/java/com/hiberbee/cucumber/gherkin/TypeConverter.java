@@ -22,23 +22,22 @@
  * SOFTWARE.
  */
 
-package com.hiberbee.cucumber.generators;
+package com.hiberbee.cucumber.gherkin;
 
-import org.jetbrains.annotations.NotNull;
-import org.springframework.cache.interceptor.KeyGenerator;
+import com.google.common.base.Converter;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Method;
-
 @Service
-public class MethodNameGenerator implements KeyGenerator {
+public class TypeConverter extends Converter<String, String> {
 
-  @NotNull
   @Override
-  public Object generate(
-      @NotNull final Object target,
-      @NotNull final Method method,
-      final Object @NotNull ... params) {
-    return method.getName();
+  protected String doForward(final @NonNull String s) {
+    return s.toUpperCase().replace(' ', '_');
+  }
+
+  @Override
+  protected String doBackward(final @NonNull String s) {
+    return s.toLowerCase().replace('_', ' ');
   }
 }

@@ -4,6 +4,9 @@ logging:
 spring:
   main:
     banner-mode: 'off'
+  jackson:
+    locale: en_US
+    time-zone: Etc/UTC
 cucumber:
   slack:
     enabled: false

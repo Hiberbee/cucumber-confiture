@@ -25,22 +25,22 @@
 package com.hiberbee.cucumber.configurations;
 
 import io.cucumber.junit.platform.engine.Cucumber;
-import io.cucumber.spring.CucumberContextConfiguration;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.Contract;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.*;
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.*;
 
 @Cucumber
 @EnableAutoConfiguration
+@AutoConfigureAfter(JacksonAutoConfiguration.class)
 @EnableCaching
-@ComponentScan("com.hiberbee.cucumber")
+@AutoConfigureJson
+@ComponentScan("com.hiberbee")
 public class CucumberConfiguration {
 
   @Bean
@@ -52,13 +52,12 @@ public class CucumberConfiguration {
   public static class Caches {
 
     public static final String FEATURE = "feature";
+    public static final String SUITE = "suite";
+    public static final String HOOK = "hook";
     public static final String SCENARIO = "scenario";
-    static final String SUITE = "suite";
-    static final String HOOK = "hook";
 
-    @Contract(value = " -> new", pure = true)
     static String @NotNull [] getNames() {
-      return new String[] {SUITE, HOOK, FEATURE, SCENARIO};
+      return new String[] {Caches.SUITE, Caches.HOOK, Caches.FEATURE, Caches.SCENARIO};
     }
   }
 }

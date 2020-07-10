@@ -3,7 +3,7 @@ package com.hiberbee.cucumber.annotations;
 import com.hiberbee.cucumber.configurations.CucumberConfiguration;
 import org.intellij.lang.annotations.Language;
 import org.intellij.lang.annotations.MagicConstant;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.*;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;
@@ -12,11 +12,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Cacheable(CucumberConfiguration.Caches.SCENARIO)
+@CachePut(CucumberConfiguration.Caches.SCENARIO)
 public @interface ScenarioState {
 
-  @AliasFor(annotation = Cacheable.class, attribute = "key")
-  @MagicConstant
+  @AliasFor(annotation = CachePut.class, attribute = "key")
   @Language("SpEL")
-  String value();
+  String value() default "#root.method.name";
 }

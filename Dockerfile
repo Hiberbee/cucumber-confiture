@@ -1,6 +1,6 @@
-ARG bztVersion=14.2
-FROM blazemeter/taurus:${bztVersion}
+FROM adoptopenjdk/openjdk11:latest
 WORKDIR /app
 COPY . .
-ENTRYPOINT ["bzt"]
-CMD ["taurus.yaml"]
+RUN ./gradlew assemble
+ENTRYPOINT ["./gradlew"]
+CMD ["common:features"]

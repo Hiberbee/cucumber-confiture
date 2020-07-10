@@ -11,11 +11,10 @@ repositories {
 def VERSIONS = [
   assertj             : "3.16.1",
   cucumberReport      : "4.0.40",
-  gradle              : "6.3",
+  gradle              : "6.5.1",
   jetbrainsAnnotations: "19.0.0",
   lombok              : "1.18.12",
-  mockito             : "3.3.3",
-  yaml                : "1.26"
+  mockito             : "3.3.3"
 ]
 
 dependencies {
@@ -30,17 +29,12 @@ dependencies {
   api("org.junit.jupiter:junit-jupiter-engine")
   api("org.mockito:mockito-core:$VERSIONS.mockito")
   api("org.springframework.boot:spring-boot-starter-cache")
+  api("org.springframework.boot:spring-boot-starter-web")
 
   implementation("io.cucumber:cucumber-junit-platform-engine")
   implementation("org.springframework:spring-context")
   implementation("org.springframework.boot:spring-boot-configuration-processor")
   implementation("org.springframework.boot:spring-boot-starter-test") {
     exclude group: "com.vaadin.external.google", module: "android-json"
-  }
-  implementation("org.yaml:snakeyaml") {
-    version {
-      strictly VERSIONS.yaml
-    }
-    because "https://app.snyk.io/vuln/SNYK-JAVA-ORGYAML-537645"
   }
 }

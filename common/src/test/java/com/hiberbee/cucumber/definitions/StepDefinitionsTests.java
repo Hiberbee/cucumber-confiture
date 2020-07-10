@@ -26,6 +26,7 @@ package com.hiberbee.cucumber.definitions;
 
 import com.hiberbee.cucumber.configurations.CucumberConfiguration;
 import com.hiberbee.cucumber.definitions.StepDefinitions.State;
+import com.hiberbee.cucumber.gherkin.dsl.Maybe;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +34,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.Cache;
 
+import javax.annotation.Resource;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 @SpringBootTest(classes = {CucumberConfiguration.class, StepDefinitions.class})
 class StepDefinitionsTests {
 
-  @Autowired private StepDefinitions stepDefinitions;
+  @Resource private StepDefinitions stepDefinitions;
 
   @Value("#{cacheManager.getCache('feature')}")
   private Cache featureState;
@@ -68,7 +70,7 @@ class StepDefinitionsTests {
     final var actual = new URL("https://hiberbee.dev");
     Assertions.assertThat(this.featureState.get(State.BASE_URL, URL.class)).isNull();
 
-    final var expected = this.stepDefinitions.baseUrlIs(true, new URL("https://hiberbee.dev"));
+    final var expected = this.stepDefinitions.baseUrlIs(Maybe.IS, new URL("https://hiberbee.dev"));
     Assertions.assertThat(actual)
         .isEqualTo(expected)
         .isEqualTo(this.featureState.get(State.BASE_URL, URL.class));

@@ -4,3 +4,9 @@ root = true
 indent_size = tab
 tab_width = 2
 ij_continuation_indent_size = 2
+
+[gradlew.bat]
+end_of_line = crlf
+
+[gradlew]
+end_of_line = lf

@@ -22,20 +22,23 @@
  * SOFTWARE.
  */
 
-package com.hiberbee.cucumber.support;
+package com.hiberbee.cucumber.annotations;
 
-import lombok.*;
-import lombok.extern.java.Log;
-import org.assertj.core.api.Assertions;
-import org.jetbrains.annotations.NotNull;
+import com.hiberbee.cucumber.configurations.CucumberConfiguration;
+import org.intellij.lang.annotations.Language;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.core.annotation.AliasFor;
 
-@Log
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CucumberRun {
+import java.lang.annotation.*;
 
-  @SneakyThrows(AssertionError.class)
-  public static void fail(final @NotNull Throwable throwable) {
-    log.fine(throwable.getMessage());
-    Assertions.fail(throwable.getMessage(), throwable);
-  }
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@CachePut(CucumberConfiguration.Caches.HOOK)
+public @interface HookState {
+
+  @AliasFor(annotation = CachePut.class, attribute = "key")
+  @Language("SpEL")
+  String value() default "#root.method.name";
 }

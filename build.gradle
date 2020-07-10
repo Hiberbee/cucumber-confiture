@@ -1,6 +1,6 @@
 plugins {
   id("com.github.ben-manes.versions") version "0.28.0"
-  id("com.google.cloud.tools.jib") version '2.3.0'
+  id("com.google.cloud.tools.jib") version '2.4.0'
   id("idea")
   id("jacoco")
   id("java-library")
@@ -15,8 +15,7 @@ version "1.0.0-SNAPSHOT"
 
 def VERSIONS = [
   cucumber            : "6.2.2",
-  cucumberReporting   : "4.0.61",
-  gradle              : "6.5-rc-1",
+  gradle              : "6.5.1",
   guava               : "29.0-jre",
   jetbrainsAnnotations: "19.0.0",
   junit               : "5.7.0-M1",
@@ -46,7 +45,7 @@ idea {
   module {
     downloadJavadoc = false
     downloadSources = true
-    excludeDirs += files("gradle", "stress", ".gradle")
+    excludeDirs += files("gradle", ".gradle")
     inheritOutputDirs = true
     outputDir = file("build")
   }
@@ -68,21 +67,32 @@ sonarqube {
 
 class CucumberFeature extends JavaExec {
 
-  CucumberFeature() {
-    super.setGroup("verification")
-    super.dependsOn(project.tasks.getByName("testClasses"))
-    super.outputs.dir("build/reports")
-    super.setMain("org.junit.platform.console.ConsoleLauncher")
-    super.
-      setClasspath(project.
-        convention.
-        getPlugin(JavaPluginConvention.class).
-        getSourceSets().
-        findByName("test").
-        runtimeClasspath)
-    super.args("--include-engine", "cucumber", "--reports-dir", "build/reports/cucumber")
-    super.finalizedBy(project.tasks.getByName("jacocoTestReport"))
+  @Input
+  void withTags(String... tags) {
+    tags.each {
+      args += ["--include-tag", it]
+    }
   }
+
+  @Input
+  void withoutTags(String... tags) {
+    tags.each {
+      args += ["--exclude-tag", it]
+    }
+  }
+
+  @Input
+  void withPackage(String packageName = "features") {
+    args += ["--select-package", packageName]
+  }
+
+  @Input
+  void withProperties(Map<String, Object> properties) {
+    properties.each {
+      jvmArgs += "-D${it.key}=${it.value}"
+    }
+  }
+
 }
 
 allprojects {
@@ -159,7 +169,6 @@ allprojects {
     implementation platform("org.springframework.boot:spring-boot-dependencies:$VERSIONS.springBoot")
 
     compileClasspath("org.jetbrains:annotations:$VERSIONS.jetbrainsAnnotations")
-    testImplementation("de.monochromata.cucumber:reporting-plugin:$VERSIONS.cucumberReporting")
     testImplementation("io.cucumber:cucumber-junit-platform-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
@@ -172,12 +181,10 @@ allprojects {
 subprojects {
 
   apply plugin: "maven-publish"
+  apply plugin: "com.github.ben-manes.versions"
 
   tasks.register("features", CucumberFeature) {
-    args += [
-      "--select-package",
-      "features",
-    ]
+    it.withPackage("features")
   }
 
   publishing {

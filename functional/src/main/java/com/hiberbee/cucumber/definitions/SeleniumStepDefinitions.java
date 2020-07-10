@@ -26,6 +26,7 @@ package com.hiberbee.cucumber.definitions;
 
 import com.hiberbee.cucumber.functions.ScreenShotGenerator;
 import com.hiberbee.cucumber.functions.ScreenShotNamer;
+import com.hiberbee.cucumber.gherkin.dsl.Maybe;
 import com.hiberbee.cucumber.support.CucumberRun;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -40,10 +41,8 @@ import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.function.Try;
 import org.junit.platform.commons.util.ReflectionUtils;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 
@@ -89,6 +88,12 @@ public class SeleniumStepDefinitions {
     return WindowState.valueOf(value.toUpperCase());
   }
 
+  @Given("link with text {string} {maybe} present on the page")
+  public void windowStateIs(final String text, final Maybe maybe) {
+    Assertions.assertThat(this.driver.findElement(By.linkText(text)).isDisplayed())
+        .matches(maybe.predicate());
+  }
+
   @Given("window state is {windowState}")
   public void windowStateIs(@NotNull final WindowState state) {
     switch (state) {
@@ -131,6 +136,11 @@ public class SeleniumStepDefinitions {
     }
   }
 
+  @ParameterType("(title|source)")
+  public String pageAttribute(String value) {
+    return value;
+  }
+
   @Given("web browser is {browser}")
   public void webBrowserIs(@NotNull final DriverManagerType browser) {
     if (this.driver == null) {
@@ -153,9 +163,9 @@ public class SeleniumStepDefinitions {
     Assertions.assertThat(history).containsAll(urls);
   }
 
-  @And("^(page source|title) should(?:(| not)) contain (.+)$")
+  @And("page {pageAttribute} {maybe} contain {string}")
   public void pageTitleShouldContain(
-      final String location, final String not, final String expected) {
+      final String location, final Maybe maybe, final String expected) {
     final Function<? super WebDriver, String> extractingFunction =
         webDriver -> {
           if (location.equals("title")) return webDriver.getTitle();
@@ -163,7 +173,7 @@ public class SeleniumStepDefinitions {
         };
     Assertions.assertThat(this.driver)
         .extracting(extractingFunction)
-        .matches(actual -> not.isBlank() == actual.contains(expected));
+        .matches(actual -> maybe.yes() == actual.contains(expected));
   }
 
   enum WindowState {

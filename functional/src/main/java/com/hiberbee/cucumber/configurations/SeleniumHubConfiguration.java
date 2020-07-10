@@ -27,7 +27,8 @@ package com.hiberbee.cucumber.configurations;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.chrome.*;
+import org.openqa.selenium.chromium.ChromiumDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,12 +60,9 @@ public class SeleniumHubConfiguration {
         .setExperimentalOption("useAutomationExtension", false);
   }
 
-  @Bean
+  @Bean(destroyMethod = "close")
   public WebDriver webDriver(
       final Environment environment, final @NotNull Capabilities capabilities) {
-    return RemoteWebDriver.builder()
-        .url("https://selenium.hiberbee.dev/wd/hub")
-        .addAlternative(capabilities)
-        .build();
+    return new ChromeDriver();
   }
 }

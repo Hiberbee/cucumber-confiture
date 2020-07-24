@@ -9,7 +9,7 @@ repositories {
 def VERSIONS = [
   dockerClient        : "3.2.5",
   kubernetesAssertions: "4.0.0",
-  kubernetesClient    : "4.10.2",
+  kubernetesClient    : "4.10.3",
   lombok              : "1.18.12"
 ]
 

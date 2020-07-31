@@ -9,7 +9,8 @@ plugins {
   id("org.sonarqube") version "3.0"
 }
 
-group "com.hiberbee.cucumber"
+def organization = "hiberbee"
+group "com.${organization}.cucumber"
 description "Monorepo entrypoint for Cucumber test packages"
 version "1.0.0-SNAPSHOT"
 
@@ -57,11 +58,12 @@ repositories {
 
 sonarqube {
   properties {
-    property "sonar.login", System.getenv("SONAR_TOKEN")
-    property "sonar.host.url", "https://sonarcloud.io"
-    property "sonar.projectKey", rootProject.name
-    property "sonar.organization", System.getProperty("organization")
-    property "sonar.links.homepage", System.getProperty("vcs.url")
+    property("sonar.host.url", "https://sonarcloud.io")
+    property("sonar.login", System.getenv("SONAR_TOKEN"))
+    property("sonar.organization", "hiberbee")
+    property("sonar.vcs.url", "https://github.com/${organization}/cucumber-confiture")
+    property("sonar.project", project.name)
+    property("sonar.projectKey", project.name.toLowerCase())
   }
 }
 
@@ -117,15 +119,6 @@ allprojects {
 
   jacoco {
     toolVersion "0.8.5"
-  }
-  sonarqube {
-    properties {
-      property("sonar.host.url", "https://sonarcloud.io")
-      property("sonar.login", System.getenv("SONAR_TOKEN"))
-      property("sonar.organization", "hiberbee")
-      property("sonar.project", project.name)
-      property("sonar.projectKey", project.name.toLowerCase())
-    }
   }
 
   tasks.withType(CucumberFeature).configureEach {

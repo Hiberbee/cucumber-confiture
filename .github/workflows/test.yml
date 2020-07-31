@@ -1,8 +1,6 @@
 name: Cucumber
 on: push
 env:
-  GITHUB_USERNAME: ${{ github.actor }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 jobs:
   kubernetes:
@@ -13,8 +11,21 @@ jobs:
         uses: hiberbee/github-action-minikube@master
         with:
           profile: cucumber
+      - name: Install Selenium Grid
+        run: |
+          helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+          helm repo update
+          helm upgrade --install --cleanup-on-fail selenium stable/selenium
+      - name: Get Kubernetes services
+        run: kubectl get services
       - name: Checkout sources
         uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Test Java libraries
+        run: ./gradlew test sonarqube
       - name: Cache Gradle files
         uses: actions/cache@v2
         with:
@@ -24,12 +35,6 @@ jobs:
           key: ${{ runner.os }}-gradle-cache-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-      - name: Assemble Java libraries
-        run: ./gradlew assemble
       - name: Test infrastructure features
         run: ./gradlew infrastructure:features
       - name: Test integrational features

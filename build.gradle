@@ -14,14 +14,14 @@ description "Monorepo entrypoint for Cucumber test packages"
 version "1.0.0-SNAPSHOT"
 
 def VERSIONS = [
-  cucumber            : "6.2.2",
+  cucumber            : "6.3.0",
   gradle              : "6.6-rc-4",
   guava               : "29.0-jre",
   jetbrainsAnnotations: "19.0.0",
   junit               : "5.7.0-M1",
   netty               : "4.1.49.Final",
   lombok              : "1.18.12",
-  springBoot          : "2.3.1.RELEASE",
+  springBoot          : "2.3.2.RELEASE",
 ]
 
 wrapper {

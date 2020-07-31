@@ -19,7 +19,9 @@ jobs:
           java-version: 11
       - name: Start Kubernetes cluster
         uses: hiberbee/github-action-minikube@master
+        with:
+          profile: cucumber
       - name: Test Kubernetes cluster
         run: kubectl cluster-info
       - name: Test features
-        run: ./gradlew kubernetes:features
+        run: ./gradlew infrastructure:features

@@ -6,7 +6,7 @@ Feature: Automate Kubernets cluster testing with Cucumber
 
   Scenario: Kubernetes connection
     Given 'kubectl' command is executable
-    When context is 'minikube'
+    When context is 'cucumber'
     And namespace is 'kube-system'
     When I get secrets
     Then list size is greater then 15

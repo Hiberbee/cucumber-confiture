@@ -69,11 +69,10 @@ class CucumberFeature extends JavaExec {
 
   CucumberFeature() {
     group "cucumber"
-    outputs.dir "build/reports"
+    outputs.dir "${project.buildDir}/reports"
     main "org.junit.platform.console.ConsoleLauncher"
     classpath project.convention.getPlugin(JavaPluginConvention.class).sourceSets.findByName("test").runtimeClasspath
-    args "--include-engine", "cucumber", "--reports-dir", "build/reports"
-
+    args "--include-engine", "cucumber", "--reports-dir", "${project.buildDir}/reports"
     dependsOn project.tasks.getByName("testClasses"), project.tasks.getByName("processResources")
     finalizedBy project.tasks.getByName("jacocoTestReport")
   }
@@ -127,6 +126,10 @@ allprojects {
       property("sonar.project", project.name)
       property("sonar.projectKey", project.name.toLowerCase())
     }
+  }
+
+  tasks.withType(CucumberFeature).configureEach {
+    it.withPackage("features")
   }
 
   tasks.withType(GenerateIdeaModule).configureEach {

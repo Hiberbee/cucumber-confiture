@@ -1,11 +1,15 @@
+name: Snyk
 on: push
 env:
   SNYK_TOKEN: ${{ secrets.snyk }}
 jobs:
   scan-security:
+    name: Scan package vulnerabilities
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: snyk/actions/gradle-jdk11@master
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Run Snyk scanner
+        uses: snyk/actions/gradle-jdk11@master
         with:
           args: --severity-threshold=high

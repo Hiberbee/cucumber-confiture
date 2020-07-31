@@ -78,15 +78,15 @@ class CucumberFeature extends JavaExec {
   }
 
   @Input
-  void withTags(String... tags) {
-    tags.findAll{!it.empty }.each {
+  void withTags(Iterable<String> tags) {
+    tags.findAll { !it.empty }.each {
       args += ["--include-tag", it]
     }
   }
 
   @Input
-  void withoutTags(String... tags) {
-    tags.findAll{!it.empty }.each {
+  void withoutTags(Iterable<String> tags) {
+    tags.findAll { !it.empty }.each {
       args += ["--exclude-tag", it]
     }
   }
@@ -149,6 +149,9 @@ allprojects {
   }
 
   tasks.withType(Test).configureEach {
+    testLogging {
+      events 'PASSED', 'FAILED', 'SKIPPED'
+    }
     useJUnitPlatform {
       failFast = true
     }

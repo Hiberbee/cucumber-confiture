@@ -1,29 +1,16 @@
-name: Cucumber Kubernetes
-on:
-  push:
-    branches: [ master ]
-env:
-  GITHUB_USERNAME: ${{ github.actor }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+name: Kubernetes
+on: push
 jobs:
   kubernetes:
     runs-on: ubuntu-latest
     name: Kubernetes features
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
+      - name: Cache minikube files
+        uses: actions/cache@v2
         with:
-          java-version: 11
+          path: ~/.minikube/cache
+          key: ${{ runner.os }}-minikube-cache
       - name: Start Kubernetes cluster
         uses: hiberbee/github-action-minikube@master
         with:
           profile: cucumber
-      - name: Test Kubernetes cluster
-        run: kubectl cluster-info
-        id: kubectl-cluster-info
-      - name: Test Infrastructure features
-        run: ./gradlew infrastructure:features
-        if: ${{ steps.kubectl-cluster-info.outcome == 'success' }}

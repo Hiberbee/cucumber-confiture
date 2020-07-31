@@ -1,0 +1,40 @@
+name: Cucumber
+on: push
+jobs:
+  infrastructure:
+    name: Infrastructure features
+    runs-on: ubuntu-20.04
+    needs: [kubernetes]
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Test infrastructure features
+        run: ./gradlew infrastructure:features
+  integrational:
+    runs-on: ubuntu-latest
+    name: Integrational features
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Test integrational features
+        run: ./gradlew integrational:features
+  common:
+    runs-on: ubuntu-latest
+    name: Common features
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Test common features
+        run: ./gradlew common:features

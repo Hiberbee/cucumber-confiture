@@ -1,6 +1,5 @@
-on:
-  push:
-    branches: [ master ]
+name: Gradle
+on: push
 env:
   GITHUB_USERNAME: ${{ github.actor }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

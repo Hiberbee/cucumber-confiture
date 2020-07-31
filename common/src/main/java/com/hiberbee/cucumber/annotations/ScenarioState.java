@@ -2,8 +2,7 @@ package com.hiberbee.cucumber.annotations;
 
 import com.hiberbee.cucumber.configurations.CucumberConfiguration;
 import org.intellij.lang.annotations.Language;
-import org.intellij.lang.annotations.MagicConstant;
-import org.springframework.cache.annotation.*;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;

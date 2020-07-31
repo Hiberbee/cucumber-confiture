@@ -52,12 +52,12 @@ public class CucumberConfiguration {
   public Converter<String, String> dslToSnakeCaseConverter() {
     return new Converter<>() {
       @Override
-      protected String doForward(@Nonnull String s) {
+      protected String doForward(@Nonnull final String s) {
         return s.toUpperCase().replace(' ', '_');
       }
 
       @Override
-      protected String doBackward(@Nonnull String s) {
+      protected String doBackward(@Nonnull final String s) {
         return s.toLowerCase().replace('_', ' ');
       }
     };
@@ -71,7 +71,8 @@ public class CucumberConfiguration {
     public static final String HOOK = "hook";
     public static final String SCENARIO = "scenario";
 
-    static String @Nonnull [] getNames() {
+    @Nonnull
+    static String[] getNames() {
       return new String[] {Caches.SUITE, Caches.HOOK, Caches.FEATURE, Caches.SCENARIO};
     }
   }

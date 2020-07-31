@@ -16,27 +16,31 @@ import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import org.assertj.core.api.Assertions;
-import org.springframework.beans.factory.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 
-import java.util.List;
+import javax.annotation.Nonnull;
+import java.util.*;
 import java.util.function.Supplier;
 
-@SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class KubernetesStepDefinitions {
 
-  @Autowired private KubernetesClient kubernetesClient;
+  private final KubernetesClient kubernetesClient;
 
-  @Value("#{cacheManager.getCache('scenario')}")
-  private Cache scenarioState;
+  private final Cache cache;
 
-  @ParameterType("(pods|services|ingresses|deployments|daemon sets|secrets|config maps)")
+  public KubernetesStepDefinitions(
+      final KubernetesClient kubernetesClient,
+      @Value("#{cacheManager.getCache('scenario')}") final Cache cache) {
+    this.kubernetesClient = kubernetesClient;
+    this.cache = cache;
+  }
+
+  @ParameterType(
+      "(pods|services|ingresses|deployments|replica sets|daemon sets|stateful sets|secrets|config maps)")
   public Supplier<MixedOperation<?, ? extends KubernetesResourceList<?>, ?, ?>> kubernetesResource(
-    final String value) {
+      @Nonnull final String value) {
     switch (value) {
-      case "pods":
-      default:
-        return this.kubernetesClient::pods;
       case "services":
         return this.kubernetesClient::services;
       case "ingresses":
@@ -49,11 +53,26 @@ public class KubernetesStepDefinitions {
         return this.kubernetesClient.apps()::deployments;
       case "daemon sets":
         return this.kubernetesClient.apps()::daemonSets;
+      case "replica sets":
+        return this.kubernetesClient.apps()::replicaSets;
+      case "pods":
+      default:
+        return this.kubernetesClient::pods;
     }
   }
 
+  @Given("{maybe} resource with {string} {maybe} equal to {string}")
+  public void resourceWithPathMaybeExist(
+      @Nonnull final Maybe maybeHas,
+      @Nonnull final String path,
+      @Nonnull final Maybe maybeEqualTo,
+      @Nonnull final String value) {
+    final var resources = this.cache.get("resources", ArrayList<HasMetadata>::new);
+    Assertions.assertThat(resources).extracting(path).anyMatch(it -> it.toString().contains(value));
+  }
+
   @Given("kubernetes master url {maybe} {string}")
-  public void kubernetesIsRunningOn(final Maybe maybe, final String host) {
+  public void kubernetesIsRunningOn(@Nonnull final Maybe maybe, final String host) {
     Assertions.assertThat(this.kubernetesClient.getMasterUrl().toString().contains(host))
         .isEqualTo(maybe.yes());
   }
@@ -66,12 +85,20 @@ public class KubernetesStepDefinitions {
     return namespace;
   }
 
+  @Given("context is {string}")
+  public void context(final String expected) {
+    final var context = new NamedContext();
+    context.setName(expected);
+    this.kubernetesClient.getConfiguration().setCurrentContext(context);
+  }
+
   @When("I get {kubernetesResource}")
   @ScenarioState
-  public List<? extends HasMetadata> kubernetesResourceList(
-    final Supplier<MixedOperation<?, ? extends KubernetesResourceList<?>, ?, ?>>
-          kubernetesResourceSupplier) {
-    final var namespace = this.scenarioState.get("namespace", Namespace.class);
+  public <T extends HasMetadata> List<T> resources(
+      @Nonnull
+          final Supplier<MixedOperation<T, KubernetesResourceList<T>, ?, ?>>
+              kubernetesResourceSupplier) {
+    final var namespace = this.cache.get("namespace", Namespace.class);
     final var operation = kubernetesResourceSupplier.get();
     return (namespace == null)
         ? operation.inAnyNamespace().list().getItems()
@@ -80,7 +107,7 @@ public class KubernetesStepDefinitions {
 
   @Then("list size {maybe} greater then {int}")
   public void listSize(final Maybe maybe, final Integer size) {
-    Assertions.assertThat(this.scenarioState.get("kubernetesResourceList", List.class))
+    Assertions.assertThat(this.cache.get("resources", List.class))
         .hasSizeGreaterThanOrEqualTo(size);
   }
 }

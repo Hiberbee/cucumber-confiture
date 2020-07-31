@@ -87,7 +87,7 @@ public class StepDefinitions {
    *     <p>Case insensitive
    * @return {@link Maybe}
    */
-  @ParameterType("(is|is not|are|are not|has|has not|have|have not|should|should not)")
+  @ParameterType("(is|is not|are|are not|has|has not|have|have not|should|should not|contains|does not contain)")
   public Maybe maybe(final String value) {
     return Enums.stringConverter(Maybe.class)
         .compose(this.dslToSnakeCaseConverter::convert)

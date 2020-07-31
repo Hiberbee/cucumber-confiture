@@ -25,20 +25,15 @@
 package com.hiberbee.cucumber.configurations;
 
 import com.hiberbee.cucumber.support.CucumberRun;
-import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.function.Try;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.*;
-import org.openqa.selenium.chromium.ChromiumDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 
 import java.nio.file.*;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.*;
 
 @Configuration
 public class SeleniumHubConfiguration {
@@ -64,8 +59,6 @@ public class SeleniumHubConfiguration {
   }
 
   @Bean
-  public
-  @Bean
   public BiConsumer<Path, WebDriver> screenshotGenerator() {
     return (path, driver) -> {
       final var screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
@@ -77,9 +70,8 @@ public class SeleniumHubConfiguration {
     };
   }
 
-  @Bean(destroyMethod = "close")
-  public WebDriver webDriver(
-      final Environment environment, final @NotNull Capabilities capabilities) {
+  @Bean(destroyMethod = "quit")
+  public WebDriver webDriver(final Environment environment, final Capabilities capabilities) {
     return new ChromeDriver();
   }
 }

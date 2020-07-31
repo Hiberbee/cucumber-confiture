@@ -1,5 +1,11 @@
 Ability: Automate System testing with Cucumber
 
-  Scenario: Check PATH
-    Given javac executable is in $PATH path
-    And gradle executable is in $PATH path
+  Scenario Template: Executable verification
+    Given '<command>' command is executable
+
+    Examples:
+      | command |
+      | java    |
+      | php     |
+      | python  |
+      | ruby    |

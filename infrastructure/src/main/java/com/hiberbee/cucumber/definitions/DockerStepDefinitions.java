@@ -26,14 +26,15 @@ package com.hiberbee.cucumber.definitions;
 
 import com.github.dockerjava.api.DockerClient;
 import io.cucumber.java.en.Given;
-import lombok.extern.java.Log;
 import org.assertj.core.api.Assertions;
-import org.springframework.beans.factory.annotation.Autowired;
 
-@Log
 public class DockerStepDefinitions {
 
-  @Autowired private DockerClient client;
+  private final DockerClient client;
+
+  public DockerStepDefinitions(final DockerClient client) {
+    this.client = client;
+  }
 
   @Given("docker version is {string}")
   public void dockerIsRunningOn(final String version) {

@@ -24,8 +24,7 @@
 
 package com.hiberbee.cucumber.gherkin.dsl;
 
-import org.jetbrains.annotations.NotNull;
-
+import javax.annotation.Nonnull;
 import java.nio.file.*;
 import java.util.function.Predicate;
 
@@ -34,7 +33,7 @@ public enum Inode {
   DIRECTORY,
   EXECUTABLE;
 
-  public @NotNull Predicate<Path> predicate() {
+  public @Nonnull Predicate<Path> predicate() {
     switch (this) {
       case DIRECTORY:
         return Files::isDirectory;

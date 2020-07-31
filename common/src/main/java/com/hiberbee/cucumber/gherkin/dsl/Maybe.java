@@ -1,12 +1,12 @@
 package com.hiberbee.cucumber.gherkin.dsl;
 
-import lombok.extern.java.Log;
-import org.jetbrains.annotations.NotNull;
-
+import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 public enum Maybe {
+  CONTAINS,
+  DOES_NOT_CONTAIN,
   SHOULD,
   SHOULD_NOT,
   IS_NOT,
@@ -17,7 +17,7 @@ public enum Maybe {
   ARE,
   ARE_NOT;
 
-  public @NotNull Predicate<Boolean> predicate() {
+  public @Nonnull Predicate<Boolean> predicate() {
     return Predicate.isEqual(
         Predicate.isEqual(IS)
             .or(Predicate.isEqual(ARE))
@@ -27,15 +27,15 @@ public enum Maybe {
             .test(this));
   }
 
-  public @NotNull Boolean yes() {
+  public @Nonnull Boolean yes() {
     return this.predicate().test(true);
   }
 
-  public @NotNull Boolean no() {
+  public @Nonnull Boolean no() {
     return this.predicate().test(false);
   }
 
-  public @NotNull Optional<Boolean> optional() {
+  public @Nonnull Optional<Boolean> optional() {
     return Optional.of(this.yes());
   }
 }

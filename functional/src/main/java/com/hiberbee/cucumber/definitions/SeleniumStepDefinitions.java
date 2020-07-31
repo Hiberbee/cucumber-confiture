@@ -122,11 +122,9 @@ public class SeleniumStepDefinitions {
   }
 
   @After("@ui")
-  public void quitWebDriver(final Scenario scenario) {
-    if (this.webDriver != null) {
-      if (scenario.isFailed()) {
-        this.makeScreenShot(scenario.getName());
-      }
+  public void quitWebDriver(@Nonnull final Scenario scenario) {
+    if (scenario.isFailed()) {
+      this.makeScreenShot(scenario.getName());
     }
   }
 
@@ -146,17 +144,19 @@ public class SeleniumStepDefinitions {
       final String location, final Maybe maybe, final String expected) {
     final Function<? super WebDriver, String> extractingFunction =
         webDriver -> {
-          if (location.equals("title")) return webDriver.getTitle();
-          if (location.equals("source")) return webDriver.getPageSource();
-          if (location.equals("url")) return webDriver.getCurrentUrl();
-          return "";
+          switch (location) {
+            case "title":
+              return webDriver.getTitle();
+            case "source":
+              return webDriver.getPageSource();
+            case "url":
+            default:
+              return webDriver.getCurrentUrl();
+          }
         };
     Assertions.assertThat(this.webDriver)
         .extracting(extractingFunction)
-        .satisfies(
-            actual ->
-                Assertions.assertThat(actual)
-                    .satisfies(it -> Assertions.assertThat(it).contains(expected)));
+        .satisfies(actual -> Assertions.assertThat(actual).contains(expected));
   }
 
   enum WindowState {

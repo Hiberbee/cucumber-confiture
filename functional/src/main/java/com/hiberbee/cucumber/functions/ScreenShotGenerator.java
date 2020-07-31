@@ -27,12 +27,9 @@ package com.hiberbee.cucumber.functions;
 import com.hiberbee.cucumber.support.CucumberRun;
 import org.jetbrains.annotations.NotNull;
 import org.junit.platform.commons.function.Try;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.function.BiConsumer;
 
 public class ScreenShotGenerator implements BiConsumer<Path, WebDriver> {

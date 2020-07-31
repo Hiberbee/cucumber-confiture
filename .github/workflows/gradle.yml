@@ -6,9 +6,23 @@ env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 jobs:
   release-package:
+    name: Release packages
     runs-on: ubuntu-latest
-    container:
-      image: adoptopenjdk:11-jre-openj9
     steps:
-      - uses: actions/checkout@v2
-      - run: ./gradlew test
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Cache Gradle files
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-cache-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-cache-
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Test libraries
+        run: ./gradlew test publish

@@ -1,7 +1,7 @@
 name: Snyk
 on: push
 env:
-  SNYK_TOKEN: ${{ secrets.snyk }}
+  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 jobs:
   scan-security:
     name: Scan package vulnerabilities

@@ -29,14 +29,12 @@ import com.hiberbee.cucumber.definitions.StepDefinitions.State;
 import com.hiberbee.cucumber.gherkin.dsl.Maybe;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.Cache;
 
 import javax.annotation.Resource;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 
 @SpringBootTest(classes = {CucumberConfiguration.class, StepDefinitions.class})
 class StepDefinitionsTests {
@@ -56,13 +54,6 @@ class StepDefinitionsTests {
     final var actual = "https://hiberbee.dev";
     final var expected = this.stepDefinitions.url(actual);
     Assertions.assertThat(actual).isEqualTo(expected.toExternalForm());
-  }
-
-  @Test
-  void testEnvVariable() {
-    final var expected = System.getenv("HOME");
-    final var actual = this.stepDefinitions.env("$HOME");
-    Assertions.assertThat(actual).isNotNull().isEqualTo(expected);
   }
 
   @Test

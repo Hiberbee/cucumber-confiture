@@ -24,18 +24,6 @@ jobs:
       - name: Test Kubernetes cluster
         run: kubectl cluster-info
         id: kubectl-cluster-info
-  cucumber-infrastructure:
-    runs-on: ubuntu-latest
-    name: Cucumber Infrastructure features
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-      - name: Build artifacts
-        run: ./gradlew build
-      - name: Test Infrastructure
+      - name: Test Infrastructure features
         run: ./gradlew infrastructure:features
         if: ${{ steps.kubectl-cluster-info.outcome == 'success' }}

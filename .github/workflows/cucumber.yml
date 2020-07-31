@@ -1,6 +1,20 @@
 name: Cucumber
 on: push
 jobs:
+  kubernetes:
+    name: Kubernetes features
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Cache minikube files
+        uses: actions/cache@v2
+        with:
+          path: ~/.minikube/cache
+          key: ${{ runner.os }}-minikube-cache
+      - name: Start Kubernetes cluster
+        uses: hiberbee/github-action-minikube@master
+        with:
+          profile: cucumber
+
   infrastructure:
     name: Infrastructure features
     runs-on: ubuntu-20.04

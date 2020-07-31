@@ -27,9 +27,6 @@ package com.hiberbee.cucumber.support;
 import io.cucumber.core.exception.CucumberException;
 import org.junit.jupiter.api.*;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 class CucumberRunTests {
 
   @Test
@@ -37,19 +34,5 @@ class CucumberRunTests {
     final var message = "This exception was expected";
     Assertions.assertThrows(
         AssertionError.class, () -> CucumberRun.fail(new CucumberException(message)), message);
-  }
-
-  @Test
-  void testSorting() {
-    final var map =
-        Map.of(3, "C", 2, "B", 1, "A").entrySet().stream()
-            .sorted(Map.Entry.comparingByKey())
-            .collect(
-                Collectors.toMap(
-                    Map.Entry::getKey,
-                    Map.Entry::getValue,
-                    (oldValue, newValue) -> oldValue,
-                    LinkedHashMap::new));
-    Assertions.assertEquals("A", map.values().stream().findFirst().orElse("Z"));
   }
 }

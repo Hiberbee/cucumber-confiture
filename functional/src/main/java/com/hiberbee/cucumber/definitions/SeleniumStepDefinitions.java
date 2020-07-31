@@ -29,14 +29,11 @@ import com.hiberbee.cucumber.gherkin.dsl.Maybe;
 import com.hiberbee.cucumber.support.CucumberRun;
 import io.cucumber.java.*;
 import io.cucumber.java.en.*;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import io.github.bonigarcia.wdm.config.DriverManagerType;
 import lombok.extern.java.Log;
 import org.assertj.core.api.Assertions;
 import org.junit.platform.commons.function.Try;
-import org.junit.platform.commons.util.ReflectionUtils;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 
@@ -49,14 +46,17 @@ import java.util.function.*;
 @Log
 public class SeleniumStepDefinitions {
 
-  private WebDriver driver;
+  private final Cache cache;
+  private final WebDriver webDriver;
 
-  @Value("#{cacheManager.getCache('feature')}")
-  private Cache featureState;
+  public SeleniumStepDefinitions(
+      final WebDriver webDriver, @Value("#{cacheManager.getCache('feature')}") final Cache cache) {
+    this.webDriver = webDriver;
+    this.cache = cache;
+  }
 
   private @Nonnull Consumer<String> addToHistory() {
-    return Objects.requireNonNull(this.featureState.get(State.HISTORY, ArrayList<String>::new))
-        ::add;
+    return Objects.requireNonNull(this.cache.get(State.HISTORY, ArrayList<String>::new))::add;
   }
 
   private void makeScreenShot(final String name) {
@@ -65,7 +65,7 @@ public class SeleniumStepDefinitions {
             new ScreenShotNamer()
                 .andThen(Paths.get("build/reports/screenshots")::resolve)
                 .apply(String.valueOf(name).replace("\"", "")),
-            this.driver);
+            this.webDriver);
   }
 
   @ParameterType(value = "(Chrome|Edge|Opera|Firefox)")
@@ -80,26 +80,26 @@ public class SeleniumStepDefinitions {
 
   @Given("link with text {string} {maybe} present on the page")
   public void windowStateIs(final String text, @Nonnull final Maybe maybe) {
-    Assertions.assertThat(this.driver.findElement(By.linkText(text)).isDisplayed())
+    Assertions.assertThat(this.webDriver.findElement(By.linkText(text)).isDisplayed())
         .matches(maybe.predicate());
   }
 
   @When("user click on link with text {string}")
   public void userClickOnLinkWithText(final String text) {
-    this.driver.findElement(By.linkText(text)).click();
+    this.webDriver.findElement(By.linkText(text)).click();
   }
 
   @Given("window state is {windowState}")
   public void windowStateIs(@Nonnull final WindowState state) {
     switch (state) {
       case MAXIMIZED:
-        this.driver.manage().window().maximize();
+        this.webDriver.manage().window().maximize();
         break;
       case MINIMIZED:
-        this.driver.manage().window().setSize(new Dimension(0, 0));
+        this.webDriver.manage().window().setSize(new Dimension(0, 0));
         break;
       case FULLSCREEN:
-        this.driver.manage().window().fullscreen();
+        this.webDriver.manage().window().fullscreen();
         break;
       case NORMAL:
       default:
@@ -111,23 +111,22 @@ public class SeleniumStepDefinitions {
   public void isOpeningUrl(@Nonnull final URL url) {
     Try.call(url::toURI)
         .andThenTry(URI::toString)
-        .ifSuccess(this.driver::get)
+        .ifSuccess(this.webDriver::get)
         .ifSuccess(this.addToHistory())
         .ifFailure(CucumberRun::fail);
   }
 
   @Before("@ui")
   public void initBrowserHistory() {
-    this.featureState.putIfAbsent(State.HISTORY, new ArrayList<String>());
+    this.cache.putIfAbsent(State.HISTORY, new ArrayList<String>());
   }
 
   @After("@ui")
   public void quitWebDriver(final Scenario scenario) {
-    if (this.driver != null) {
+    if (this.webDriver != null) {
       if (scenario.isFailed()) {
         this.makeScreenShot(scenario.getName());
       }
-      this.driver.quit();
     }
   }
 
@@ -136,25 +135,9 @@ public class SeleniumStepDefinitions {
     return value;
   }
 
-  @Given("web browser is {browser}")
-  public void webBrowserIs(@Nonnull final DriverManagerType browser) {
-    if (this.driver == null) {
-      WebDriverManager.getInstance(browser).setup();
-      @SuppressWarnings("unchecked")
-      final var optional =
-          (Optional<WebDriver>)
-              ReflectionUtils.tryToLoadClass(browser.browserClass())
-                  .andThenTry(ReflectionUtils::newInstance)
-                  .toOptional();
-      this.driver = optional.orElseGet(ChromeDriver::new);
-    } else {
-      WebDriverManager.seleniumServerStandalone().setup();
-    }
-  }
-
   @And("browser history should contain")
   public void browserHistoryShouldContain(final List<String> urls) {
-    final var history = this.featureState.get(State.HISTORY, ArrayList<String>::new);
+    final var history = this.cache.get(State.HISTORY, ArrayList<String>::new);
     Assertions.assertThat(history).containsAll(urls);
   }
 
@@ -168,7 +151,7 @@ public class SeleniumStepDefinitions {
           if (location.equals("url")) return webDriver.getCurrentUrl();
           return "";
         };
-    Assertions.assertThat(this.driver)
+    Assertions.assertThat(this.webDriver)
         .extracting(extractingFunction)
         .satisfies(
             actual ->

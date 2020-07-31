@@ -27,11 +27,12 @@ package com.hiberbee.cucumber.configurations;
 import com.hiberbee.cucumber.support.CucumberRun;
 import org.junit.platform.commons.function.Try;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.*;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.context.annotation.*;
-import org.springframework.core.env.Environment;
 
 import java.nio.file.*;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.stream.*;
 
@@ -70,8 +71,14 @@ public class SeleniumHubConfiguration {
     };
   }
 
-  @Bean(destroyMethod = "quit")
-  public WebDriver webDriver(final Environment environment, final Capabilities capabilities) {
-    return new ChromeDriver();
+  @Bean
+  public WebDriver webDriver(final Capabilities capabilities) {
+    return RemoteWebDriver.builder()
+        .url(
+            Optional.ofNullable(System.getenv("HUB_URL"))
+                .orElse("http://localhost:4444")
+                .concat("/wd/hub"))
+        .oneOf(capabilities)
+        .build();
   }
 }

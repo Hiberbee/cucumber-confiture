@@ -2,6 +2,8 @@ name: Cucumber
 on: push
 env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  GITHUB_USERNAME: ${{ github.actor }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   kubernetes:
     name: Kubernetes features
@@ -15,9 +17,10 @@ jobs:
         run: |
           helm repo add stable https://kubernetes-charts.storage.googleapis.com/
           helm repo update
-          helm upgrade --install --cleanup-on-fail selenium stable/selenium
-      - name: Get Kubernetes services
-        run: kubectl get services
+          helm upgrade --install --cleanup-on-fail --set chrome.enabled=true --set hub.serviceType=NodePort --wait selenium stable/selenium
+      - name: Get Selenium Hub service url
+        id: selenium-hub-service
+        run: echo ::set-output name=url::$(minikube service selenium-selenium-hub --url)
       - name: Checkout sources
         uses: actions/checkout@v2
       - name: Set up JDK
@@ -35,6 +38,10 @@ jobs:
           key: ${{ runner.os }}-gradle-cache-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
+      - name: Test functional features
+        run: ./gradlew functional:features
+        env:
+          HUB_URL: ${{ steps.selenium-hub-service.outputs.url }}
       - name: Test infrastructure features
         run: ./gradlew infrastructure:features
       - name: Test integrational features

@@ -7,7 +7,7 @@ def VERSIONS = [
   webdriverManager: "4.1.0",
   lombok          : "1.18.12",
   testContainers  : "1.14.0",
-  webdriver       : "4.0.0-alpha-6"
+  webdriver       : "3.141.59"
 ]
 
 repositories {

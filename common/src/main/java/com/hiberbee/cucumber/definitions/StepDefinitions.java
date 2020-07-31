@@ -25,10 +25,9 @@
 package com.hiberbee.cucumber.definitions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Enums;
+import com.google.common.base.*;
 import com.hiberbee.cucumber.annotations.FeatureState;
 import com.hiberbee.cucumber.configurations.CucumberConfiguration;
-import com.hiberbee.cucumber.gherkin.TypeConverter;
 import com.hiberbee.cucumber.gherkin.dsl.*;
 import com.hiberbee.cucumber.support.CucumberRun;
 import io.cucumber.core.exception.CucumberException;
@@ -46,8 +45,9 @@ import org.springframework.core.io.UrlResource;
 import javax.annotation.Nonnull;
 import java.lang.reflect.Type;
 import java.net.*;
-import java.nio.file.Paths;
 import java.util.*;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 @CucumberContextConfiguration
@@ -65,7 +65,7 @@ public class StepDefinitions {
 
   @Autowired private Environment environment;
 
-  @Autowired private TypeConverter typeConverter;
+  @Autowired private Converter<String, String> dslToSnakeCaseConverter;
   @Autowired private ObjectMapper objectMapper;
 
   @ParameterType("\\$(.+)")
@@ -89,7 +89,9 @@ public class StepDefinitions {
    */
   @ParameterType("(is|is not|are|are not|has|has not|have|have not|should|should not)")
   public Maybe maybe(final String value) {
-    return Enums.stringConverter(Maybe.class).compose(this.typeConverter::convert).apply(value);
+    return Enums.stringConverter(Maybe.class)
+        .compose(this.dslToSnakeCaseConverter::convert)
+        .apply(value);
   }
 
   @ParameterType("(.+)")
@@ -103,7 +105,9 @@ public class StepDefinitions {
 
   @ParameterType("(file|directory|executable)")
   public Inode inode(final String value) {
-    return Enums.stringConverter(Inode.class).compose(this.typeConverter::convert).apply(value);
+    return Enums.stringConverter(Inode.class)
+        .compose(this.dslToSnakeCaseConverter::convert)
+        .apply(value);
   }
 
   @Given("version of {string} is {string}")

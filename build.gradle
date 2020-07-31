@@ -1,5 +1,5 @@
 plugins {
-  id("com.github.ben-manes.versions") version "0.28.0"
+  id("com.github.ben-manes.versions") version "0.29.0"
   id("com.google.cloud.tools.jib") version '2.4.0'
   id("idea")
   id("jacoco")
@@ -15,7 +15,7 @@ version "1.0.0-SNAPSHOT"
 
 def VERSIONS = [
   cucumber            : "6.2.2",
-  gradle              : "6.5.1",
+  gradle              : "6.6-rc-4",
   guava               : "29.0-jre",
   jetbrainsAnnotations: "19.0.0",
   junit               : "5.7.0-M1",

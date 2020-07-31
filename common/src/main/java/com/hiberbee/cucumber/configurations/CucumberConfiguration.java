@@ -24,28 +24,43 @@
 
 package com.hiberbee.cucumber.configurations;
 
+import com.google.common.base.Converter;
 import io.cucumber.junit.platform.engine.Cucumber;
 import lombok.*;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.*;
 
+import javax.annotation.Nonnull;
+
 @Cucumber
 @EnableAutoConfiguration
 @AutoConfigureAfter(JacksonAutoConfiguration.class)
 @EnableCaching
-@AutoConfigureJson
 @ComponentScan("com.hiberbee")
 public class CucumberConfiguration {
 
   @Bean
   public CacheManager cacheManager() {
     return new ConcurrentMapCacheManager(Caches.getNames());
+  }
+
+  @Bean
+  public Converter<String, String> dslToSnakeCaseConverter() {
+    return new Converter<>() {
+      @Override
+      protected String doForward(@Nonnull String s) {
+        return s.toUpperCase().replace(' ', '_');
+      }
+
+      @Override
+      protected String doBackward(@Nonnull String s) {
+        return s.toLowerCase().replace('_', ' ');
+      }
+    };
   }
 
   @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -56,7 +71,7 @@ public class CucumberConfiguration {
     public static final String HOOK = "hook";
     public static final String SCENARIO = "scenario";
 
-    static String @NotNull [] getNames() {
+    static String @Nonnull [] getNames() {
       return new String[] {Caches.SUITE, Caches.HOOK, Caches.FEATURE, Caches.SCENARIO};
     }
   }

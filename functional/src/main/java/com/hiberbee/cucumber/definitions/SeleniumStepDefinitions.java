@@ -32,8 +32,7 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.Scenario;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
+import io.cucumber.java.en.*;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.github.bonigarcia.wdm.config.DriverManagerType;
 import lombok.extern.java.Log;
@@ -94,6 +93,11 @@ public class SeleniumStepDefinitions {
         .matches(maybe.predicate());
   }
 
+  @When("user click on link with text {string}")
+  public void userClickOnLinkWithText(final String text) {
+    this.driver.findElement(By.linkText(text)).click();
+  }
+
   @Given("window state is {windowState}")
   public void windowStateIs(@NotNull final WindowState state) {
     switch (state) {
@@ -136,7 +140,7 @@ public class SeleniumStepDefinitions {
     }
   }
 
-  @ParameterType("(title|source)")
+  @ParameterType("(title|source|url)")
   public String pageAttribute(String value) {
     return value;
   }

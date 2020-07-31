@@ -24,9 +24,10 @@
 
 package com.hiberbee.cucumber.configurations;
 
+import com.hiberbee.cucumber.support.CucumberRun;
 import org.jetbrains.annotations.NotNull;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.WebDriver;
+import org.junit.platform.commons.function.Try;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.*;
 import org.openqa.selenium.chromium.ChromiumDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -34,6 +35,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import java.nio.file.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,6 +61,20 @@ public class SeleniumHubConfiguration {
     return new ChromeOptions()
         .addArguments(args)
         .setExperimentalOption("useAutomationExtension", false);
+  }
+
+  @Bean
+  public
+  @Bean
+  public BiConsumer<Path, WebDriver> screenshotGenerator() {
+    return (path, driver) -> {
+      final var screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+      Try.success(path)
+          .andThenTry(Files::createDirectories)
+          .andThenTry(it -> Files.createFile(it.resolve(path)))
+          .andThenTry(it -> Files.write(it, screenshot))
+          .ifFailure(CucumberRun::fail);
+    };
   }
 
   @Bean(destroyMethod = "close")

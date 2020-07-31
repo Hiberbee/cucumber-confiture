@@ -1,13 +1,10 @@
 package com.hiberbee.cucumber.definitions;
 
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.When;
-import io.cucumber.spring.CucumberContextConfiguration;
+import io.cucumber.java.en.*;
 import org.assertj.core.api.Assertions;
 import org.junit.platform.commons.function.Try;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
 public class SystemStepDefinitions {
 

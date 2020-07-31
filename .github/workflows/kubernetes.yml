@@ -1,14 +1,25 @@
+name: Cucumber Kubernetes
 on:
   push:
     branches: [ master ]
 env:
   GITHUB_USERNAME: ${{ github.actor }}
-  GITHUB_TOKEN: ${{ secrets.github }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 jobs:
-  release-package:
+  cucumber-kubernetes:
     runs-on: ubuntu-latest
-    container:
-      image: adoptopenjdk:11-jre-openj9
+    name: Kubernetes features
     steps:
-      - uses: actions/checkout@v2
-      - run: ./gradlew test publish
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Start Kubernetes cluster
+        uses: hiberbee/github-action-minikube@master
+      - name: Test Kubernetes cluster
+        run: kubectl cluster-info
+      - name: Test features
+        run: ./gradlew kubernetes:features

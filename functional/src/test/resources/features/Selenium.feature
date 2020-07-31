@@ -12,7 +12,9 @@ Feature: Automate Web UI testing with Cucumber
     And link with text 'Behance' should present on the page
     And link with text 'Linkedin' should present on the page
     And link with text 'Facebook' should present on the page
-
+    And browser history should contain
+      | https://bndigital.co |
+    
   Scenario: Contact page
     When user is opening https://bndigital.co/contact url
     Then page title should contain 'Contact'

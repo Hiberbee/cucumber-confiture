@@ -1,10 +1,8 @@
 Feature: Automate Kubernets cluster testing with Cucumber
 
   Background: Dependencies are installed
-    Given 'kubectl' command is executable
-    And 'minikube' command is executable
-    And 'kops' command is executable
-    And 'skaffold' command is executable
+    Given 'minikube' command is executable
+    And 'kubectl' command is executable
 
   Scenario: Kubernetes connection
     Given 'kubectl' command is executable

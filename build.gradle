@@ -19,7 +19,7 @@ def VERSIONS = [
   gradle              : "6.6-rc-4",
   guava               : "29.0-jre",
   jetbrainsAnnotations: "19.0.0",
-  junit               : "5.7.0-M1",
+  junit               : "5.7.0-RC1",
   netty               : "4.1.49.Final",
   lombok              : "1.18.12",
   springBoot          : "2.3.3.RELEASE",
